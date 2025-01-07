@@ -173,3 +173,21 @@ func TestDeleteShortCode(t *testing.T) {
 		t.Fatalf("Expected status code 200, got %d", resp.Code)
 	}
 }
+
+func TestInvalidUrl(t *testing.T) {
+	if err := initDB(); err != nil {
+		t.Fatalf("Failed to initialize database: %v", err)
+	}
+	r := mux.NewRouter()
+	r.HandleFunc("/shorten", shortenHandler).Methods("POST")
+	shortenReqPayload := map[string]string{"long_url": ""}
+	reqBody, _ := json.Marshal(shortenReqPayload)
+	req := httptest.NewRequest(http.MethodPost, "/shorten", bytes.NewBuffer(reqBody))
+	req.Header.Set("Content-Type", "application/json")
+	resp := httptest.NewRecorder()
+	r.ServeHTTP(resp, req)
+	if resp.Code != http.StatusBadRequest {
+		t.Fatal("Expected an error: Invalid URL should not be saved, but it was successfully saved")
+		t.Fatalf("Expected status code 404, got %d", resp.Code)
+	}
+}
