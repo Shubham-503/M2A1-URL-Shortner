@@ -18,10 +18,12 @@ var db *gorm.DB
 
 // Define the URLShortener model
 type URLShortener struct {
-	ID          uint   `gorm:"primaryKey"`
-	OriginalURL string `gorm:"unique;size:2083;not null"`
-	ShortCode   string `gorm:"unique;not null"`
-	CreatedAt   time.Time
+	ID             uint   `gorm:"primaryKey"`
+	OriginalURL    string `gorm:"unique;size:2083;not null"`
+	ShortCode      string `gorm:"unique;not null"`
+	HitCount       uint   `gorm:"default:0"`
+	CreatedAt      time.Time
+	LastAccessedAt *time.Time
 }
 
 func initDB() error {
@@ -103,12 +105,17 @@ func redirectHandler(w http.ResponseWriter, r *http.Request) {
 	var urlShortener URLShortener
 	// Use GORM to query the original URL based on the short code
 	result := db.Where("short_code = ?", shortCode).First(&urlShortener)
-	fmt.Println(result)
-	fmt.Println(urlShortener)
-	fmt.Println(urlShortener.OriginalURL)
-	fmt.Println(urlShortener.ShortCode)
+
 	if result.Error != nil {
 		http.Error(w, "Short code not found", http.StatusBadRequest)
+		return
+	}
+
+	// increment hit_count and update last_accessed_at column
+	// TODO: Try to use single db query
+	result = db.Model(&URLShortener{}).Where("short_code = ?", shortCode).Update("last_accessed_at", time.Now()).Update("hit_count", urlShortener.HitCount+1)
+	if result.Error != nil {
+		fmt.Printf("Error in update: %s", result.Error.Error())
 		return
 	}
 
