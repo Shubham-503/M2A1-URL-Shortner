@@ -6,7 +6,6 @@ import (
 	"log"
 	"math/rand"
 	"net/http"
-	"strings"
 	"time"
 
 	"github.com/gorilla/mux"
@@ -19,9 +18,10 @@ var db *gorm.DB
 // Define the URLShortener model
 type URLShortener struct {
 	ID             uint   `gorm:"primaryKey"`
-	OriginalURL    string `gorm:"unique;size:2083;not null"`
+	OriginalURL    string `gorm:"size:2083;not null"`
 	ShortCode      string `gorm:"unique;not null"`
 	HitCount       uint   `gorm:"default:0"`
+	ShortenCount   uint   `gorm:"default:1"`
 	CreatedAt      time.Time
 	LastAccessedAt *time.Time
 }
@@ -63,23 +63,26 @@ func shortenHandler(w http.ResponseWriter, r *http.Request) {
 		ShortCode:   shortCode,
 	}
 	result := db.Create(&urlShortener)
-	// fmt.Print("result.Error.Error()", result.Error.Error())
-
-	if result.Error != nil && strings.Contains(result.Error.Error(), "UNIQUE constraint failed") {
-		fmt.Println("unique values")
-		// Use GORM to query the original URL based on the short code
-		result := db.Where("original_url = ?", urlShortener.OriginalURL).First(&urlShortener)
-		if result.Error != nil {
-			http.Error(w, "Short code not found", http.StatusNotFound)
-			return
-
-		}
-
-		// Redirect the user to the original URL
-		response := map[string]string{"short_code": urlShortener.ShortCode}
-		w.Header().Set("Content-Type", "application/json")
-		json.NewEncoder(w).Encode(response)
+	if result.Error != nil {
+		http.Error(w, "Error in saving", http.StatusInternalServerError)
 		return
+	}
+
+	var currentLongUrlList []URLShortener
+	// check if long_url already exists
+	result = db.Model(&URLShortener{}).Find(&currentLongUrlList, "original_url = ?", urlShortener.OriginalURL)
+	if result.Error != nil {
+		http.Error(w, "Error in saving", http.StatusInternalServerError)
+		return
+	}
+	// if exists increment count for each row
+	var ids []uint
+	for _, record := range currentLongUrlList {
+		ids = append(ids, record.ID)
+	}
+
+	if len(ids) > 1 {
+		db.Model(&URLShortener{}).Where("id IN ?", ids).Update("shorten_count", gorm.Expr("shorten_count + ?", 1))
 	}
 	response := map[string]string{"short_code": shortCode}
 	w.Header().Set("Content-Type", "application/json")
