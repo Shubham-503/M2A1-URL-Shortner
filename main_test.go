@@ -3,9 +3,11 @@ package main
 import (
 	"bytes"
 	"encoding/json"
+	"fmt"
 	"net/http"
 	"net/http/httptest"
 	"testing"
+	"time"
 
 	"github.com/gorilla/mux"
 	"gorm.io/driver/sqlite"
@@ -133,7 +135,7 @@ func TestShortCodeNotFound(t *testing.T) {
 	var uRLShortener URLShortener
 	for {
 		newShortCode = generateShortCode(7)
-		result := db.Where("short_code = ?", newShortCode).First(&uRLShortener)
+		result := db.Model(&URLShortener{}).Where("short_code = ? AND deleted_at IS NULL", newShortCode).First(&uRLShortener)
 		if result.RowsAffected != 0 {
 			continue
 		} else {
@@ -150,7 +152,7 @@ func TestShortCodeNotFound(t *testing.T) {
 
 	r.ServeHTTP(resp, req)
 
-	if resp.Code != http.StatusBadRequest {
+	if resp.Code != http.StatusNotFound {
 		t.Fatalf("Expected status code 400, got %d", resp.Code)
 	}
 }
@@ -160,7 +162,7 @@ func TestDeleteShortCode(t *testing.T) {
 		t.Fatalf("Failed to initialize database: %v", err)
 	}
 	var urlShortener URLShortener
-	result := db.Model(&URLShortener{}).First(&urlShortener, "api_key IS NOT NULL")
+	result := db.Model(&URLShortener{}).First(&urlShortener, "api_key IS NOT NULL AND deleted_at IS NULL")
 	if result.Error != nil {
 		t.Fatalf("Error ")
 	}
@@ -220,6 +222,31 @@ func TestPreventUnathorizedDeleteShortCode(t *testing.T) {
 
 	if resp.Code != http.StatusNotFound {
 		t.Fatalf("Expected status code 404, got %d", resp.Code)
+	}
+
+}
+
+func TestExpiredUrl(t *testing.T) {
+	if err := initDB(); err != nil {
+		t.Fatalf("Failed to initialize database: %v", err)
+	}
+	r := mux.NewRouter()
+	r.HandleFunc("/redirect", redirectHandler).Methods("GET")
+	var urlShortener URLShortener
+	result := db.Model(&URLShortener{}).First(&urlShortener, "api_key IS NOT NULL AND expired_at < ? AND deleted_at IS NULL", time.Now())
+	if result.Error != nil {
+		t.Fatalf("Error in db ")
+	}
+	fmt.Print(urlShortener)
+
+	redirectURL := "/redirect?code=" + urlShortener.ShortCode
+	req := httptest.NewRequest(http.MethodGet, redirectURL, nil)
+	resp := httptest.NewRecorder()
+
+	r.ServeHTTP(resp, req)
+
+	if resp.Code != http.StatusGone {
+		t.Fatalf("Expected status code 410, got %d", resp.Code)
 	}
 
 }

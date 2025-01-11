@@ -24,6 +24,7 @@ type URLShortener struct {
 	ShortenCount   uint   `gorm:"default:1"`
 	CreatedAt      time.Time
 	ApiKey         string
+	ExpiredAt      *time.Time
 	LastAccessedAt *time.Time
 	DeletedAt      *time.Time
 	UserID         uint
@@ -58,7 +59,8 @@ func initDB() error {
 // Handler to shorten URLs
 func shortenHandler(w http.ResponseWriter, r *http.Request) {
 	var request struct {
-		LongURL string `json:"long_url"`
+		LongURL   string     `json:"long_url"`
+		ExpiredAt *time.Time `json:"expired_at"`
 	}
 
 	// Retrieve the API key from the request headers
@@ -92,10 +94,12 @@ func shortenHandler(w http.ResponseWriter, r *http.Request) {
 	shortCode := generateShortCode(6)
 
 	// Create a new URLShortener record with the original URL, short code, and API key
+	// TODO: Check if expired_at default value
 	urlShortener := URLShortener{
 		OriginalURL: request.LongURL,
 		ShortCode:   shortCode,
 		ApiKey:      apiKey,
+		ExpiredAt:   request.ExpiredAt,
 		// UserID:      user.ID,
 	}
 
@@ -147,10 +151,21 @@ func redirectHandler(w http.ResponseWriter, r *http.Request) {
 
 	var urlShortener URLShortener
 	// Use GORM to query the original URL based on the short code
-	result := db.Where("short_code = ? AND deleted_at IS NULL", shortCode).First(&urlShortener)
+	result := db.Where("short_code = ?  AND deleted_at IS NULL", shortCode).First(&urlShortener)
+
+	if result.RowsAffected == 0 {
+		http.Error(w, "Short code not found", http.StatusNotFound)
+		return
+	}
+
+	if urlShortener.ExpiredAt != nil && urlShortener.ExpiredAt.Before(time.Now()) {
+		http.Error(w, "Short code has expired", http.StatusGone)
+		return
+	}
 
 	if result.Error != nil {
-		http.Error(w, "Short code not found", http.StatusBadRequest)
+		fmt.Printf("error %s", result.Error.Error())
+		http.Error(w, "DB error", http.StatusInternalServerError)
 		return
 	}
 
