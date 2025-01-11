@@ -102,10 +102,10 @@ func TestDuplcateUrl(t *testing.T) {
 
 	shortenReqPayload := map[string]string{"long_url": randomUrl}
 	reqBody, _ := json.Marshal(shortenReqPayload)
-
+	apiKey1 := fmt.Sprint(time.Time.Nanosecond(time.Now()))
 	req := httptest.NewRequest(http.MethodPost, "/shorten", bytes.NewBuffer(reqBody))
 	req.Header.Set("Content-Type", "application/json")
-	req.Header.Set("api_key", "test12345")
+	req.Header.Set("api_key", apiKey1)
 	resp := httptest.NewRecorder()
 
 	r.ServeHTTP(resp, req)
@@ -115,8 +115,10 @@ func TestDuplcateUrl(t *testing.T) {
 	}
 
 	req2 := httptest.NewRequest(http.MethodPost, "/shorten", bytes.NewBuffer(reqBody))
+	apiKey2 := fmt.Sprint(time.Time.Nanosecond(time.Now()))
 	req2.Header.Set("Content-Type", "application/json")
-	req2.Header.Set("api_key", "test12345")
+	req2.Header.Set("api_key", apiKey2)
+	// req2.Header.Set("api_key", "test12345")
 
 	resp2 := httptest.NewRecorder()
 

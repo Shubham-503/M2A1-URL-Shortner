@@ -23,7 +23,7 @@ type URLShortener struct {
 	HitCount       uint   `gorm:"default:0"`
 	ShortenCount   uint   `gorm:"default:1"`
 	CreatedAt      time.Time
-	ApiKey         string
+	ApiKey         string `gorm:"unique"`
 	ExpiredAt      *time.Time
 	LastAccessedAt *time.Time
 	DeletedAt      *time.Time
