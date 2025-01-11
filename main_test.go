@@ -45,6 +45,7 @@ func TestURLShortenerAndRedirect(t *testing.T) {
 
 	req := httptest.NewRequest(http.MethodPost, "/shorten", bytes.NewBuffer(reqBody))
 	req.Header.Set("Content-Type", "application/json")
+	req.Header.Set("api_key", "test12345")
 	resp := httptest.NewRecorder()
 
 	r.ServeHTTP(resp, req)
@@ -65,6 +66,7 @@ func TestURLShortenerAndRedirect(t *testing.T) {
 
 	redirectURL := "/redirect?code=" + shortCode
 	req = httptest.NewRequest(http.MethodGet, redirectURL, nil)
+	req.Header.Set("api_key", "test12345")
 	resp = httptest.NewRecorder()
 
 	r.ServeHTTP(resp, req)
@@ -101,6 +103,7 @@ func TestDuplcateUrl(t *testing.T) {
 
 	req := httptest.NewRequest(http.MethodPost, "/shorten", bytes.NewBuffer(reqBody))
 	req.Header.Set("Content-Type", "application/json")
+	req.Header.Set("api_key", "test12345")
 	resp := httptest.NewRecorder()
 
 	r.ServeHTTP(resp, req)
@@ -111,6 +114,8 @@ func TestDuplcateUrl(t *testing.T) {
 
 	req2 := httptest.NewRequest(http.MethodPost, "/shorten", bytes.NewBuffer(reqBody))
 	req2.Header.Set("Content-Type", "application/json")
+	req2.Header.Set("api_key", "test12345")
+
 	resp2 := httptest.NewRecorder()
 
 	r.ServeHTTP(resp2, req2)
@@ -155,7 +160,7 @@ func TestDeleteShortCode(t *testing.T) {
 		t.Fatalf("Failed to initialize database: %v", err)
 	}
 	var urlShortener URLShortener
-	result := db.First(&urlShortener)
+	result := db.Model(&URLShortener{}).First(&urlShortener, "api_key IS NOT NULL")
 	if result.Error != nil {
 		t.Fatalf("Error ")
 	}
@@ -166,6 +171,7 @@ func TestDeleteShortCode(t *testing.T) {
 	redirectURL := "/redirect?code=" + urlShortener.ShortCode
 	req := httptest.NewRequest(http.MethodDelete, redirectURL, nil)
 	resp := httptest.NewRecorder()
+	req.Header.Set("api_key", urlShortener.ApiKey)
 
 	r.ServeHTTP(resp, req)
 
@@ -184,10 +190,36 @@ func TestInvalidUrl(t *testing.T) {
 	reqBody, _ := json.Marshal(shortenReqPayload)
 	req := httptest.NewRequest(http.MethodPost, "/shorten", bytes.NewBuffer(reqBody))
 	req.Header.Set("Content-Type", "application/json")
+	req.Header.Set("api_key", "test12345")
 	resp := httptest.NewRecorder()
 	r.ServeHTTP(resp, req)
 	if resp.Code != http.StatusBadRequest {
 		t.Fatal("Expected an error: Invalid URL should not be saved, but it was successfully saved")
 		t.Fatalf("Expected status code 404, got %d", resp.Code)
 	}
+}
+
+func TestPreventUnathorizedDeleteShortCode(t *testing.T) {
+	if err := initDB(); err != nil {
+		t.Fatalf("Failed to initialize database: %v", err)
+	}
+	r := mux.NewRouter()
+	r.HandleFunc("/redirect", deleteShortenHandler).Methods("DELETE")
+
+	var urlShortener URLShortener
+	result := db.Model(&URLShortener{}).First(&urlShortener, "api_key IS NOT NULL")
+	if result.Error != nil {
+		t.Fatalf("Error ")
+	}
+	redirectURL := "/redirect?code=" + urlShortener.ShortCode
+	req := httptest.NewRequest(http.MethodDelete, redirectURL, nil)
+	resp := httptest.NewRecorder()
+	req.Header.Set("api_key", urlShortener.ApiKey+urlShortener.ApiKey)
+
+	r.ServeHTTP(resp, req)
+
+	if resp.Code != http.StatusNotFound {
+		t.Fatalf("Expected status code 404, got %d", resp.Code)
+	}
+
 }
