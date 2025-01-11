@@ -47,7 +47,8 @@ func TestURLShortenerAndRedirect(t *testing.T) {
 
 	req := httptest.NewRequest(http.MethodPost, "/shorten", bytes.NewBuffer(reqBody))
 	req.Header.Set("Content-Type", "application/json")
-	req.Header.Set("api_key", "test12345")
+	apiKey := fmt.Sprint(time.Time.Nanosecond(time.Now()))
+	req.Header.Set("api_key", apiKey)
 	resp := httptest.NewRecorder()
 
 	r.ServeHTTP(resp, req)
@@ -251,4 +252,33 @@ func TestExpiredUrl(t *testing.T) {
 		t.Fatalf("Expected status code 410, got %d", resp.Code)
 	}
 
+}
+
+func TestCustomCodeExists(t *testing.T) {
+	if err := initDB(); err != nil {
+		t.Fatalf("Failed to initialize database: %v", err)
+	}
+	randomUrl := "http://www." + generateShortCode(7) + ".com/" + generateShortCode(4)
+	var urlShortner URLShortener
+	result := db.Model(&URLShortener{}).First(&urlShortner, "deleted_at IS NULL")
+	if result.Error != nil {
+		t.Fatal("DB error")
+	}
+	fmt.Printf("short code %s", urlShortner.ShortCode)
+	r := mux.NewRouter()
+	r.HandleFunc("/shorten", shortenHandler).Methods("POST")
+
+	shortenReqPayload := map[string]string{"long_url": randomUrl, "custom_code": urlShortner.ShortCode}
+	reqBody, _ := json.Marshal(shortenReqPayload)
+	apiKey1 := fmt.Sprint(time.Time.Nanosecond(time.Now()))
+	req := httptest.NewRequest(http.MethodPost, "/shorten", bytes.NewBuffer(reqBody))
+	req.Header.Set("Content-Type", "application/json")
+	req.Header.Set("api_key", apiKey1)
+	resp := httptest.NewRecorder()
+
+	r.ServeHTTP(resp, req)
+
+	if resp.Code != http.StatusConflict {
+		t.Fatalf("Expected status code 409, got %d", resp.Code)
+	}
 }

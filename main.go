@@ -59,8 +59,9 @@ func initDB() error {
 // Handler to shorten URLs
 func shortenHandler(w http.ResponseWriter, r *http.Request) {
 	var request struct {
-		LongURL   string     `json:"long_url"`
-		ExpiredAt *time.Time `json:"expired_at"`
+		LongURL    string     `json:"long_url"`
+		ExpiredAt  *time.Time `json:"expired_at"`
+		CustomCode string     `json:"custom_code"`
 	}
 
 	// Retrieve the API key from the request headers
@@ -90,8 +91,20 @@ func shortenHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	// Generate a unique short code for the provided URL
-	shortCode := generateShortCode(6)
+	// Check whether customCode is aval for not
+	var shortCode string
+	if request.CustomCode != "" {
+		var urlShortenerExists URLShortener
+		result := db.Model(&URLShortener{}).Where("short_code = ?", request.CustomCode).First(&urlShortenerExists)
+		if result.RowsAffected != 0 {
+			http.Error(w, "code already exists please try different code", http.StatusConflict)
+			return
+		}
+		shortCode = request.CustomCode
+	} else {
+		// Generate a unique short code for the provided URL
+		shortCode = generateShortCode(6)
+	}
 
 	// Create a new URLShortener record with the original URL, short code, and API key
 	// TODO: Check if expired_at default value
