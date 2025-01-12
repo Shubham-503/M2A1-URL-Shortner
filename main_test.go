@@ -313,15 +313,71 @@ func TestBulkShorten(t *testing.T) {
 	// }
 
 	// reqBody, _ := json.Marshal(jsonPayload)
+	var user User
+	result := db.Model(&User{}).First(&user, "tier = 'enterprise'")
+	if result.Error != nil {
+		t.Fatal("DB error")
+	}
+
 	req := httptest.NewRequest(http.MethodPost, "/shorten-bulk", bytes.NewBuffer([]byte(jsonPayload)))
 	req.Header.Set("Content-Type", "application/json")
-	apiKey := fmt.Sprint(time.Time.Nanosecond(time.Now()))
-	req.Header.Set("api_key", apiKey)
+	// apiKey := fmt.Sprint(time.Time.Nanosecond(time.Now()))
+	req.Header.Set("api_key", user.ApiKey)
 	resp := httptest.NewRecorder()
 
 	r.ServeHTTP(resp, req)
 
 	if resp.Code != http.StatusOK {
+		t.Fatalf("Expected status code 200, got %d", resp.Code)
+	}
+
+}
+
+func TestPreventUnauthorisedBulkShorten(t *testing.T) {
+	if err := initDB(); err != nil {
+		t.Fatalf("Failed to initialize database: %v", err)
+	}
+
+	r := mux.NewRouter()
+	r.HandleFunc("/shorten-bulk", shortenBulkHandler).Methods("POST")
+	jsonPayload := `{
+    "urls": [
+        {
+            "long_url": "https://example.com",
+            "expired_at": "2025-02-10T13:06:30.521Z",
+            "custom_code": "example1"
+        },
+        {
+            "long_url": "https://anotherexample.com",
+            "custom_code": "example2"
+        },
+        {
+            "long_url": "https://yetanotherexample.com"
+        }
+    ]
+	}`
+
+	// err := json.Unmarshal([]byte(jsonPayload), &shortenReqPayload)
+	// if err != nil {
+	// 	t.Fatalf("Error unmarshaling JSON: %v", err)
+	// }
+
+	// reqBody, _ := json.Marshal(jsonPayload)
+	var user User
+	result := db.Model(&User{}).First(&user, "tier = 'hobby'")
+	if result.Error != nil {
+		t.Fatal("DB error")
+	}
+
+	req := httptest.NewRequest(http.MethodPost, "/shorten-bulk", bytes.NewBuffer([]byte(jsonPayload)))
+	req.Header.Set("Content-Type", "application/json")
+	// apiKey := fmt.Sprint(time.Time.Nanosecond(time.Now()))
+	req.Header.Set("api_key", user.ApiKey)
+	resp := httptest.NewRecorder()
+
+	r.ServeHTTP(resp, req)
+
+	if resp.Code != http.StatusForbidden {
 		t.Fatalf("Expected status code 200, got %d", resp.Code)
 	}
 

@@ -4,7 +4,7 @@ import (
 	"bytes"
 	"encoding/json"
 	"fmt"
-	"io/ioutil"
+	"io"
 	"log"
 	"math/rand"
 	"net/http"
@@ -169,8 +169,8 @@ func shortenBulkHandler(w http.ResponseWriter, r *http.Request) {
 	}
 
 	// Debug payload
-	body, _ := ioutil.ReadAll(r.Body)
-	fmt.Println("Raw Payload:", string(body))
+	body, _ := io.ReadAll(r.Body)
+	// fmt.Println("Raw Payload:", string(body))
 	// Decode the JSON request body into the request struct
 	// err := json.NewDecoder(r.Body).Decode(&request)
 	err := json.NewDecoder(bytes.NewReader(body)).Decode(&request)
