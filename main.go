@@ -1,8 +1,10 @@
 package main
 
 import (
+	"bytes"
 	"encoding/json"
 	"fmt"
+	"io/ioutil"
 	"log"
 	"math/rand"
 	"net/http"
@@ -23,7 +25,7 @@ type URLShortener struct {
 	HitCount       uint   `gorm:"default:0"`
 	ShortenCount   uint   `gorm:"default:1"`
 	CreatedAt      time.Time
-	ApiKey         string `gorm:"unique"`
+	ApiKey         string
 	ExpiredAt      *time.Time
 	LastAccessedAt *time.Time
 	DeletedAt      *time.Time
@@ -32,10 +34,10 @@ type URLShortener struct {
 }
 
 type User struct {
-	ID        uint   `gorm:"primaryKey;autoIncrement"`
-	Email     string `gorm:"unique"`
+	ID        uint `gorm:"primaryKey;autoIncrement"`
+	Email     string
 	Name      string
-	ApiKey    string
+	ApiKey    string `gorm:"unique"`
 	CreatedAt time.Time
 }
 
@@ -71,18 +73,20 @@ func shortenHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	// var user User
-	// result := db.Model(&User{}).First(&user, "api_key = ?", apiKey)
-	// if result.Error != nil {
-	// 	user := User{
-	// 		ApiKey: apiKey,
-	// 	}
-	// 	result = db.Model(&User{}).Create(&user)
-	// 	if result.Error != nil {
-	// 		http.Error(w, "Error occured in creating user", http.StatusInternalServerError)
-	// 		return
-	// 	}
-	// }
+	var user User
+	result := db.Model(&User{}).First(&user, "api_key = ?", apiKey)
+	if result.RowsAffected == 0 {
+		newUser := User{
+			ApiKey: apiKey,
+		}
+		result = db.Model(&User{}).Create(&newUser)
+		user = newUser
+		fmt.Printf("userId:  %d\n", user.ID)
+		if result.Error != nil {
+			http.Error(w, "Error occured in creating user", http.StatusInternalServerError)
+			return
+		}
+	}
 
 	// Decode the JSON request body into the request struct
 	err := json.NewDecoder(r.Body).Decode(&request)
@@ -108,16 +112,17 @@ func shortenHandler(w http.ResponseWriter, r *http.Request) {
 
 	// Create a new URLShortener record with the original URL, short code, and API key
 	// TODO: Check if expired_at default value
+	fmt.Printf("userId before url_shortner insertion:  %d\n", user.ID)
 	urlShortener := URLShortener{
 		OriginalURL: request.LongURL,
 		ShortCode:   shortCode,
 		ApiKey:      apiKey,
 		ExpiredAt:   request.ExpiredAt,
-		// UserID:      user.ID,
+		UserID:      user.ID,
 	}
 
 	// Save the URLShortener record to the database
-	result := db.Create(&urlShortener)
+	result = db.Create(&urlShortener)
 	if result.Error != nil {
 		http.Error(w, "Error in saving", http.StatusInternalServerError)
 		return
@@ -144,6 +149,122 @@ func shortenHandler(w http.ResponseWriter, r *http.Request) {
 	response := map[string]string{"short_code": shortCode}
 	w.Header().Set("Content-Type", "application/json")
 	json.NewEncoder(w).Encode(response)
+}
+
+func shortenBulkHandler(w http.ResponseWriter, r *http.Request) {
+	var request struct {
+		URLs []struct {
+			LongURL    string     `json:"long_url"`
+			ExpiredAt  *time.Time `json:"expired_at"`
+			CustomCode string     `json:"custom_code"`
+		} `json:"urls"`
+	}
+
+	// Retrieve the API key from the request headers
+	apiKey := r.Header.Get("api_key")
+	if apiKey == "" {
+		http.Error(w, "Please pass api_key", http.StatusUnauthorized)
+		return
+	}
+
+	// Debug payload
+	body, _ := ioutil.ReadAll(r.Body)
+	fmt.Println("Raw Payload:", string(body))
+	// Decode the JSON request body into the request struct
+	// err := json.NewDecoder(r.Body).Decode(&request)
+	err := json.NewDecoder(bytes.NewReader(body)).Decode(&request)
+	if err != nil {
+		fmt.Println("JSON Decoding Error:", err)
+		http.Error(w, "Invalid request payload", http.StatusBadRequest)
+		return
+	}
+	if len(request.URLs) == 0 {
+		http.Error(w, "No URLs provided", http.StatusBadRequest)
+		return
+	}
+
+	var successes []map[string]string
+	var errors []map[string]string
+
+	for _, urlRequest := range request.URLs {
+		if urlRequest.LongURL == "" {
+			errors = append(errors, map[string]string{
+				"long_url": urlRequest.LongURL,
+				"error":    "Long URL is required",
+			})
+			continue
+		}
+
+		// Check whether customCode is aval for not
+		var shortCode string
+		if urlRequest.CustomCode != "" {
+			var urlShortenerExists URLShortener
+			result := db.Model(&URLShortener{}).Where("short_code = ?", urlRequest.CustomCode).First(&urlShortenerExists)
+			if result.RowsAffected != 0 {
+				errors = append(errors, map[string]string{
+					"long_url": urlRequest.LongURL,
+					"error":    "Short code already exists",
+				})
+				continue
+			}
+			shortCode = urlRequest.CustomCode
+		} else {
+			// Generate a unique short code for the provided URL
+			shortCode = generateShortCode(6)
+		}
+
+		// Create a new URLShortener record with the original URL, short code, and API key
+		// TODO: Check if expired_at default value
+		urlShortener := URLShortener{
+			OriginalURL: urlRequest.LongURL,
+			ShortCode:   shortCode,
+			ApiKey:      apiKey,
+			ExpiredAt:   urlRequest.ExpiredAt,
+			// UserID:      user.ID,
+		}
+
+		// Save the URLShortener record to the database
+		result := db.Create(&urlShortener)
+		if result.Error != nil {
+			errors = append(errors, map[string]string{
+				"long_url": urlRequest.LongURL,
+				"error":    "Failed to save short code",
+			})
+			continue
+		}
+
+		// Retrieve all existing records in the database with the same original URL
+		var currentLongUrlList []URLShortener
+		// check if long_url already exists
+		result = db.Model(&URLShortener{}).Find(&currentLongUrlList, "original_url = ?", urlShortener.OriginalURL)
+		if result.Error != nil {
+			errors = append(errors, map[string]string{
+				"long_url": urlRequest.LongURL,
+				"error":    "DB Error",
+			})
+			continue
+		}
+		// if url exists increment count for each row
+		var ids []uint
+		for _, record := range currentLongUrlList {
+			ids = append(ids, record.ID)
+		}
+		if len(ids) > 1 {
+			db.Model(&URLShortener{}).Where("id IN ?", ids).Update("shorten_count", gorm.Expr("shorten_count + ?", 1))
+		}
+
+		successes = append(successes, map[string]string{
+			"long_url":   urlRequest.LongURL,
+			"short_code": shortCode,
+		})
+	}
+	response := map[string]interface{}{
+		"success": successes,
+		"errors":  errors,
+	}
+	w.Header().Set("Content-Type", "application/json")
+	json.NewEncoder(w).Encode(response)
+
 }
 
 func generateShortCode(length int) string {
@@ -245,6 +366,7 @@ func main() {
 	// Initialize the router
 	r := mux.NewRouter()
 	r.HandleFunc("/shorten", shortenHandler).Methods("POST")
+	r.HandleFunc("/shorten-bulk", shortenBulkHandler).Methods("POST")
 	r.HandleFunc("/redirect", deleteShortenHandler).Methods("DELETE")
 	r.HandleFunc("/redirect", redirectHandler).Methods("GET")
 

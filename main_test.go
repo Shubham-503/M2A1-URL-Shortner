@@ -282,3 +282,47 @@ func TestCustomCodeExists(t *testing.T) {
 		t.Fatalf("Expected status code 409, got %d", resp.Code)
 	}
 }
+
+func TestBulkShorten(t *testing.T) {
+	if err := initDB(); err != nil {
+		t.Fatalf("Failed to initialize database: %v", err)
+	}
+
+	r := mux.NewRouter()
+	r.HandleFunc("/shorten-bulk", shortenBulkHandler).Methods("POST")
+	jsonPayload := `{
+    "urls": [
+        {
+            "long_url": "https://example.com",
+            "expired_at": "2025-02-10T13:06:30.521Z",
+            "custom_code": "example1"
+        },
+        {
+            "long_url": "https://anotherexample.com",
+            "custom_code": "example2"
+        },
+        {
+            "long_url": "https://yetanotherexample.com"
+        }
+    ]
+	}`
+
+	// err := json.Unmarshal([]byte(jsonPayload), &shortenReqPayload)
+	// if err != nil {
+	// 	t.Fatalf("Error unmarshaling JSON: %v", err)
+	// }
+
+	// reqBody, _ := json.Marshal(jsonPayload)
+	req := httptest.NewRequest(http.MethodPost, "/shorten-bulk", bytes.NewBuffer([]byte(jsonPayload)))
+	req.Header.Set("Content-Type", "application/json")
+	apiKey := fmt.Sprint(time.Time.Nanosecond(time.Now()))
+	req.Header.Set("api_key", apiKey)
+	resp := httptest.NewRecorder()
+
+	r.ServeHTTP(resp, req)
+
+	if resp.Code != http.StatusOK {
+		t.Fatalf("Expected status code 200, got %d", resp.Code)
+	}
+
+}
