@@ -38,6 +38,7 @@ type User struct {
 	Email     string
 	Name      string
 	ApiKey    string `gorm:"unique"`
+	Tier      string `gorm:"default:'hobby';check: tier IN ('hobby', 'enterprise')"`
 	CreatedAt time.Time
 }
 
@@ -142,7 +143,7 @@ func shortenHandler(w http.ResponseWriter, r *http.Request) {
 		ids = append(ids, record.ID)
 	}
 	if len(ids) > 1 {
-		db.Model(&URLShortener{}).Where("id IN ?", ids).Update("shorten_count", gorm.Expr("shorten_count + ?", 1))
+		db.Model(&URLShortener{}).Where("id IN ?", ids).Update("shorten_count", currentLongUrlList[0].ShortenCount+1)
 	}
 
 	// Send the generated short code back as the response
@@ -183,6 +184,25 @@ func shortenBulkHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	var user User
+	result := db.Model(&User{}).First(&user, "api_key = ?", apiKey)
+	if user.Tier != "enterprise" {
+		http.Error(w, "Access denied: bulk creation is only available for enterprise users", http.StatusForbidden)
+		return
+	}
+	if result.RowsAffected == 0 {
+		newUser := User{
+			ApiKey: apiKey,
+		}
+		result = db.Model(&User{}).Create(&newUser)
+		user = newUser
+		fmt.Printf("userId:  %d\n", user.ID)
+		if result.Error != nil {
+			http.Error(w, "Error occured in creating user", http.StatusInternalServerError)
+			return
+		}
+	}
+
 	var successes []map[string]string
 	var errors []map[string]string
 
@@ -220,7 +240,7 @@ func shortenBulkHandler(w http.ResponseWriter, r *http.Request) {
 			ShortCode:   shortCode,
 			ApiKey:      apiKey,
 			ExpiredAt:   urlRequest.ExpiredAt,
-			// UserID:      user.ID,
+			UserID:      user.ID,
 		}
 
 		// Save the URLShortener record to the database
