@@ -478,6 +478,40 @@ func getUserUrlsHandler(w http.ResponseWriter, r *http.Request) {
 
 }
 
+func healthHandler(w http.ResponseWriter, r *http.Request) {
+	sqliteDB, dbErr := db.DB()
+	if dbErr != nil {
+		response := map[string]interface{}{
+			"status":  "unhealthy",
+			"message": "Database connectivity failed",
+			"error":   dbErr.Error(),
+		}
+		w.Header().Set("Content-Type", "application/json")
+		w.WriteHeader(http.StatusInternalServerError)
+		json.NewEncoder(w).Encode(response)
+		return
+	}
+
+	if err := sqliteDB.Ping(); err != nil {
+		response := map[string]interface{}{
+			"status":  "unhealthy",
+			"message": "Database connectivity failed",
+			"error":   err.Error(),
+		}
+		w.Header().Set("Content-Type", "application/json")
+		w.WriteHeader(http.StatusInternalServerError)
+		json.NewEncoder(w).Encode(response)
+		return
+	}
+
+	response := map[string]interface{}{
+		"status":  "healthy",
+		"message": "Server and database are up and running",
+	}
+	w.Header().Set("Content-Type", "application/json")
+	json.NewEncoder(w).Encode(response)
+}
+
 func main() {
 	err := initDB()
 	if err != nil {
@@ -496,6 +530,7 @@ func main() {
 	r.HandleFunc("/redirect", deleteShortenHandler).Methods("DELETE")
 	r.HandleFunc("/redirect", redirectHandler).Methods("GET")
 	r.HandleFunc("/users/url", getUserUrlsHandler).Methods("GET")
+	r.HandleFunc("/health", healthHandler).Methods("GET")
 
 	// static path
 	r.PathPrefix("/").Handler(http.FileServer(http.Dir(staticDir)))
