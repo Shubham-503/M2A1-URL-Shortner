@@ -443,3 +443,23 @@ func TestPasswordProtectedCode(t *testing.T) {
 	}
 
 }
+
+func TestGetUserUrls(t *testing.T) {
+	if err := initDB(); err != nil {
+		t.Fatalf("Failed to initialize database: %v", err)
+	}
+	r := mux.NewRouter()
+	r.HandleFunc("/users/url", getUserUrlsHandler).Methods("GET")
+	req := httptest.NewRequest(http.MethodGet, "/users/url", nil)
+	req.Header.Set("Content-Type", "application/json")
+	req.Header.Set("api_key", "234786100")
+
+	resp := httptest.NewRecorder()
+
+	r.ServeHTTP(resp, req)
+
+	if resp.Code != http.StatusOK {
+		t.Fatalf("Expected status code 200, got %d", resp.Code)
+	}
+
+}

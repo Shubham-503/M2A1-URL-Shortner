@@ -453,6 +453,31 @@ func editRedirectExpiryHandler(w http.ResponseWriter, r *http.Request) {
 
 }
 
+func getUserUrlsHandler(w http.ResponseWriter, r *http.Request) {
+	apiKey := r.Header.Get("api_key")
+	if apiKey == "" {
+		http.Error(w, "Please pass api_key", http.StatusUnauthorized)
+		return
+	}
+	var user User
+	result := db.Model(&User{}).First(&user, "api_key = ?", apiKey)
+	if result.Error != nil {
+		http.Error(w, "Invalid API Key", http.StatusUnauthorized)
+		return
+	}
+
+	var urls []URLShortener
+	result = db.Model(&URLShortener{}).Where("user_id = ?", user.ID).Find(&urls)
+	if result.Error != nil {
+		http.Error(w, "Error fetching URLs", http.StatusInternalServerError)
+		return
+	}
+
+	w.Header().Set("Content-Type", "application/json")
+	json.NewEncoder(w).Encode(urls)
+
+}
+
 func main() {
 	err := initDB()
 	if err != nil {
@@ -470,6 +495,7 @@ func main() {
 	r.HandleFunc("/shorten-bulk", shortenBulkHandler).Methods("POST")
 	r.HandleFunc("/redirect", deleteShortenHandler).Methods("DELETE")
 	r.HandleFunc("/redirect", redirectHandler).Methods("GET")
+	r.HandleFunc("/users/url", getUserUrlsHandler).Methods("GET")
 
 	// static path
 	r.PathPrefix("/").Handler(http.FileServer(http.Dir(staticDir)))
