@@ -373,6 +373,46 @@ func deleteShortenHandler(w http.ResponseWriter, r *http.Request) {
 	json.NewEncoder(w).Encode(response)
 }
 
+func editRedirectExpiryHandler(w http.ResponseWriter, r *http.Request) {
+	var request struct {
+		ExpiredAt *time.Time `json:"expired_at"`
+	}
+
+	w.Header().Set("Content-Type", "application/json")
+	queryParams := r.URL.Query()
+	shortCode := queryParams.Get("code")
+
+	// Retrieve the API key from the request headers
+	apiKey := r.Header.Get("api_key")
+	if apiKey == "" {
+		http.Error(w, "Please pass api_key", http.StatusUnauthorized)
+		return
+	}
+
+	// Decode the JSON request body into the request struct
+	err := json.NewDecoder(r.Body).Decode(&request)
+	if err != nil || shortCode == "" || request.ExpiredAt == nil {
+		http.Error(w, "Invalid request payload", http.StatusBadRequest)
+		return
+	}
+	fmt.Printf("date : %s\n", request.ExpiredAt)
+	fmt.Printf("apiKey : %s\n", apiKey)
+	fmt.Printf("shortCode : %s\n", shortCode)
+	result := db.Model(&URLShortener{}).Where("short_code = ? AND api_key = ? AND deleted_at IS NULL", shortCode, apiKey).Update("expired_at", request.ExpiredAt)
+	if result.RowsAffected == 0 {
+		http.Error(w, "Error in db", http.StatusInternalServerError)
+	}
+	if result.Error != nil {
+		http.Error(w, "Error in db", http.StatusInternalServerError)
+		return
+	}
+
+	response := map[string]string{"message": "Expiry date change successfully"}
+	w.Header().Set("Content-Type", "application/json")
+	json.NewEncoder(w).Encode(response)
+
+}
+
 func main() {
 	err := initDB()
 	if err != nil {
@@ -386,6 +426,7 @@ func main() {
 	// Initialize the router
 	r := mux.NewRouter()
 	r.HandleFunc("/shorten", shortenHandler).Methods("POST")
+	r.HandleFunc("/redirect", editRedirectExpiryHandler).Methods("PATCH")
 	r.HandleFunc("/shorten-bulk", shortenBulkHandler).Methods("POST")
 	r.HandleFunc("/redirect", deleteShortenHandler).Methods("DELETE")
 	r.HandleFunc("/redirect", redirectHandler).Methods("GET")

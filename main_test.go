@@ -382,3 +382,43 @@ func TestPreventUnauthorisedBulkShorten(t *testing.T) {
 	}
 
 }
+
+func TestRedirectExpiry(t *testing.T) {
+	if err := initDB(); err != nil {
+		t.Fatalf("Failed to initialize database: %v", err)
+	}
+
+	// Get the current time
+	now := time.Now()
+
+	// Subtract 24 hours to get yesterday's time
+	yesterday := now.Add(-24 * time.Hour)
+
+	// Format yesterday's date in ISO 8601 format
+	yesterdayISO := yesterday.Format(time.RFC3339)
+
+	var urlShortner URLShortener
+	db.Model(&URLShortener{}).First(&urlShortner, "expired_at is null and api_key is not null and deleted_at is null")
+	fmt.Printf("date : %s\n", urlShortner.ApiKey)
+	fmt.Printf("date : %s\n", urlShortner.ShortCode)
+	fmt.Printf("date : %s\n", urlShortner.OriginalURL)
+	fmt.Printf("date : %s\n", yesterdayISO)
+
+	r := mux.NewRouter()
+	r.HandleFunc("/redirect", editRedirectExpiryHandler).Methods("PATCH")
+	redirectURL := "/redirect?code=" + urlShortner.ShortCode
+	ReqPayload := map[string]string{"expired_at": yesterdayISO}
+	reqBody, _ := json.Marshal(ReqPayload)
+
+	req := httptest.NewRequest(http.MethodPatch, redirectURL, bytes.NewBuffer(reqBody))
+	req.Header.Set("Content-Type", "application/json")
+	req.Header.Set("api_key", urlShortner.ApiKey)
+	resp := httptest.NewRecorder()
+
+	r.ServeHTTP(resp, req)
+
+	if resp.Code != http.StatusOK {
+		t.Fatalf("Expected status code 200, got %d", resp.Code)
+	}
+
+}
