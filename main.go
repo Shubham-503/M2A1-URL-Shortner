@@ -26,6 +26,7 @@ type URLShortener struct {
 	ShortenCount   uint   `gorm:"default:1"`
 	CreatedAt      time.Time
 	ApiKey         string
+	Password       *string `json:"password,omitempty"`
 	ExpiredAt      *time.Time
 	LastAccessedAt *time.Time
 	DeletedAt      *time.Time
@@ -65,6 +66,7 @@ func shortenHandler(w http.ResponseWriter, r *http.Request) {
 		LongURL    string     `json:"long_url"`
 		ExpiredAt  *time.Time `json:"expired_at"`
 		CustomCode string     `json:"custom_code"`
+		Password   *string    `json:"password,omitempty"`
 	}
 
 	// Retrieve the API key from the request headers
@@ -114,12 +116,14 @@ func shortenHandler(w http.ResponseWriter, r *http.Request) {
 	// Create a new URLShortener record with the original URL, short code, and API key
 	// TODO: Check if expired_at default value
 	fmt.Printf("userId before url_shortner insertion:  %d\n", user.ID)
+	fmt.Printf("userId before url_shortner insertion:  %v\n", request.Password)
 	urlShortener := URLShortener{
 		OriginalURL: request.LongURL,
 		ShortCode:   shortCode,
 		ApiKey:      apiKey,
 		ExpiredAt:   request.ExpiredAt,
 		UserID:      user.ID,
+		Password:    request.Password,
 	}
 
 	// Save the URLShortener record to the database
@@ -158,6 +162,7 @@ func shortenBulkHandler(w http.ResponseWriter, r *http.Request) {
 			LongURL    string     `json:"long_url"`
 			ExpiredAt  *time.Time `json:"expired_at"`
 			CustomCode string     `json:"custom_code"`
+			Password   *string    `json:"password,omitempty"`
 		} `json:"urls"`
 	}
 
@@ -241,6 +246,7 @@ func shortenBulkHandler(w http.ResponseWriter, r *http.Request) {
 			ApiKey:      apiKey,
 			ExpiredAt:   urlRequest.ExpiredAt,
 			UserID:      user.ID,
+			Password:    urlRequest.Password,
 		}
 
 		// Save the URLShortener record to the database
@@ -302,10 +308,16 @@ func generateShortCode(length int) string {
 func redirectHandler(w http.ResponseWriter, r *http.Request) {
 	queryParams := r.URL.Query()
 	shortCode := queryParams.Get("code")
+	password := queryParams.Get("password")
 
 	var urlShortener URLShortener
 	// Use GORM to query the original URL based on the short code
 	result := db.Where("short_code = ?  AND deleted_at IS NULL", shortCode).First(&urlShortener)
+
+	if urlShortener.Password != nil && *urlShortener.Password != password {
+		http.Error(w, "Please pass password", http.StatusUnauthorized)
+		return
+	}
 
 	if result.RowsAffected == 0 {
 		http.Error(w, "Short code not found", http.StatusNotFound)
@@ -376,6 +388,7 @@ func deleteShortenHandler(w http.ResponseWriter, r *http.Request) {
 func editRedirectExpiryHandler(w http.ResponseWriter, r *http.Request) {
 	var request struct {
 		ExpiredAt *time.Time `json:"expired_at"`
+		Password  *string    `json:"password,omitempty"`
 	}
 
 	w.Header().Set("Content-Type", "application/json")
@@ -391,23 +404,50 @@ func editRedirectExpiryHandler(w http.ResponseWriter, r *http.Request) {
 
 	// Decode the JSON request body into the request struct
 	err := json.NewDecoder(r.Body).Decode(&request)
-	if err != nil || shortCode == "" || request.ExpiredAt == nil {
+	if err != nil || shortCode == "" || (request.ExpiredAt == nil && request.Password == nil) {
 		http.Error(w, "Invalid request payload", http.StatusBadRequest)
 		return
 	}
 	fmt.Printf("date : %s\n", request.ExpiredAt)
 	fmt.Printf("apiKey : %s\n", apiKey)
 	fmt.Printf("shortCode : %s\n", shortCode)
-	result := db.Model(&URLShortener{}).Where("short_code = ? AND api_key = ? AND deleted_at IS NULL", shortCode, apiKey).Update("expired_at", request.ExpiredAt)
-	if result.RowsAffected == 0 {
-		http.Error(w, "Error in db", http.StatusInternalServerError)
-	}
-	if result.Error != nil {
-		http.Error(w, "Error in db", http.StatusInternalServerError)
-		return
+
+	updates := map[string]interface{}{}
+
+	if request.ExpiredAt != nil {
+		updates["expired_at"] = request.ExpiredAt
 	}
 
-	response := map[string]string{"message": "Expiry date change successfully"}
+	if request.Password != nil {
+		updates["password"] = request.Password
+	}
+
+	if len(updates) > 0 {
+		result := db.Model(&URLShortener{}).
+			Where("short_code = ? AND api_key = ? AND deleted_at IS NULL", shortCode, apiKey).
+			Updates(updates)
+
+		if result.RowsAffected == 0 {
+			http.Error(w, "No rows updated, check short code and API key", http.StatusNotFound)
+			return
+		}
+
+		if result.Error != nil {
+			http.Error(w, "Error in db", http.StatusInternalServerError)
+			return
+		}
+	}
+
+	// result := db.Model(&URLShortener{}).Where("short_code = ? AND api_key = ? AND deleted_at IS NULL", shortCode, apiKey).Update("expired_at", request.ExpiredAt).Update("password", request.Password)
+	// if result.RowsAffected == 0 {
+	// 	http.Error(w, "Error in db", http.StatusInternalServerError)
+	// }
+	// if result.Error != nil {
+	// 	http.Error(w, "Error in db", http.StatusInternalServerError)
+	// 	return
+	// }
+
+	response := map[string]string{"message": "Update Successfull"}
 	w.Header().Set("Content-Type", "application/json")
 	json.NewEncoder(w).Encode(response)
 
