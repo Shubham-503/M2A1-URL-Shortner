@@ -9,38 +9,41 @@ import (
 	"testing"
 	"time"
 
+	"M2A1-URL-Shortner/config"
+	"M2A1-URL-Shortner/handlers"
+	"M2A1-URL-Shortner/models"
+	"M2A1-URL-Shortner/utils"
+
 	"github.com/gorilla/mux"
-	"gorm.io/driver/sqlite"
-	"gorm.io/gorm"
 )
 
-func initTestDB() error {
-	var err error
-	// Open SQLite database with GORM
-	db, err = gorm.Open(sqlite.Open("url_shortener.db"), &gorm.Config{})
-	tx := db.Begin()
-	defer tx.Rollback()
-	if err != nil {
-		return err
-	}
+// func initTestDB() error {
+// 	var err error
+// 	// Open SQLite database with GORM
+// 	db, err = gorm.Open(sqlite.Open("url_shortener.db"), &gorm.Config{})
+// 	tx := db.Begin()
+// 	defer tx.Rollback()
+// 	if err != nil {
+// 		return err
+// 	}
 
-	// Auto migrate the schema
-	err = tx.AutoMigrate(&URLShortener{})
-	if err != nil {
-		return err
-	}
+// 	// Auto migrate the schema
+// 	err = tx.AutoMigrate(&URLShortener{})
+// 	if err != nil {
+// 		return err
+// 	}
 
-	return nil
-}
+// 	return nil
+// }
 
 func TestURLShortenerAndRedirect(t *testing.T) {
-	if err := initDB(); err != nil {
+	if err := config.InitDB(); err != nil {
 		t.Fatalf("Failed to initialize database: %v", err)
 	}
 
 	r := mux.NewRouter()
-	r.HandleFunc("/shorten", shortenHandler).Methods("POST")
-	r.HandleFunc("/redirect", redirectHandler).Methods("GET")
+	r.HandleFunc("/shorten", handlers.ShortenHandler).Methods("POST")
+	r.HandleFunc("/redirect", handlers.RedirectHandler).Methods("GET")
 
 	shortenReqPayload := map[string]string{"long_url": "https://example.com"}
 	reqBody, _ := json.Marshal(shortenReqPayload)
@@ -91,15 +94,15 @@ func TestURLShortenerAndRedirect(t *testing.T) {
 
 func TestDuplcateUrl(t *testing.T) {
 
-	if err := initDB(); err != nil {
+	if err := config.InitDB(); err != nil {
 		t.Fatalf("Failed to initialize database: %v", err)
 	}
 
 	// randomUrl := "http://www.example.com/test2"
-	randomUrl := "http://www." + generateShortCode(7) + ".com/" + generateShortCode(4)
+	randomUrl := "http://www." + utils.GenerateShortCode(7) + ".com/" + utils.GenerateShortCode(4)
 
 	r := mux.NewRouter()
-	r.HandleFunc("/shorten", shortenHandler).Methods("POST")
+	r.HandleFunc("/shorten", handlers.ShortenHandler).Methods("POST")
 
 	shortenReqPayload := map[string]string{"long_url": randomUrl}
 	reqBody, _ := json.Marshal(shortenReqPayload)
@@ -131,14 +134,14 @@ func TestDuplcateUrl(t *testing.T) {
 }
 
 func TestShortCodeNotFound(t *testing.T) {
-	if err := initDB(); err != nil {
+	if err := config.InitDB(); err != nil {
 		t.Fatalf("Failed to initialize database: %v", err)
 	}
 	var newShortCode string
-	var uRLShortener URLShortener
+	var uRLShortener models.URLShortener
 	for {
-		newShortCode = generateShortCode(7)
-		result := db.Model(&URLShortener{}).Where("short_code = ? AND deleted_at IS NULL", newShortCode).First(&uRLShortener)
+		newShortCode = utils.GenerateShortCode(7)
+		result := config.DB.Model(&models.URLShortener{}).Where("short_code = ? AND deleted_at IS NULL", newShortCode).First(&uRLShortener)
 		if result.RowsAffected != 0 {
 			continue
 		} else {
@@ -147,7 +150,7 @@ func TestShortCodeNotFound(t *testing.T) {
 
 	}
 	r := mux.NewRouter()
-	r.HandleFunc("/redirect", redirectHandler).Methods("GET")
+	r.HandleFunc("/redirect", handlers.RedirectHandler).Methods("GET")
 
 	redirectURL := "/redirect?code=" + newShortCode
 	req := httptest.NewRequest(http.MethodGet, redirectURL, nil)
@@ -161,17 +164,17 @@ func TestShortCodeNotFound(t *testing.T) {
 }
 
 func TestDeleteShortCode(t *testing.T) {
-	if err := initDB(); err != nil {
+	if err := config.InitDB(); err != nil {
 		t.Fatalf("Failed to initialize database: %v", err)
 	}
-	var urlShortener URLShortener
-	result := db.Model(&URLShortener{}).First(&urlShortener, "api_key IS NOT NULL AND deleted_at IS NULL")
+	var urlShortener models.URLShortener
+	result := config.DB.Model(&models.URLShortener{}).First(&urlShortener, "api_key IS NOT NULL AND deleted_at IS NULL")
 	if result.Error != nil {
 		t.Fatalf("Error ")
 	}
 
 	r := mux.NewRouter()
-	r.HandleFunc("/redirect", deleteShortenHandler).Methods("DELETE")
+	r.HandleFunc("/redirect", handlers.DeleteShortenHandler).Methods("DELETE")
 
 	redirectURL := "/redirect?code=" + urlShortener.ShortCode
 	req := httptest.NewRequest(http.MethodDelete, redirectURL, nil)
@@ -186,11 +189,11 @@ func TestDeleteShortCode(t *testing.T) {
 }
 
 func TestInvalidUrl(t *testing.T) {
-	if err := initDB(); err != nil {
+	if err := config.InitDB(); err != nil {
 		t.Fatalf("Failed to initialize database: %v", err)
 	}
 	r := mux.NewRouter()
-	r.HandleFunc("/shorten", shortenHandler).Methods("POST")
+	r.HandleFunc("/shorten", handlers.ShortenHandler).Methods("POST")
 	shortenReqPayload := map[string]string{"long_url": ""}
 	reqBody, _ := json.Marshal(shortenReqPayload)
 	req := httptest.NewRequest(http.MethodPost, "/shorten", bytes.NewBuffer(reqBody))
@@ -205,14 +208,14 @@ func TestInvalidUrl(t *testing.T) {
 }
 
 func TestPreventUnathorizedDeleteShortCode(t *testing.T) {
-	if err := initDB(); err != nil {
+	if err := config.InitDB(); err != nil {
 		t.Fatalf("Failed to initialize database: %v", err)
 	}
 	r := mux.NewRouter()
-	r.HandleFunc("/redirect", deleteShortenHandler).Methods("DELETE")
+	r.HandleFunc("/redirect", handlers.DeleteShortenHandler).Methods("DELETE")
 
-	var urlShortener URLShortener
-	result := db.Model(&URLShortener{}).First(&urlShortener, "api_key IS NOT NULL")
+	var urlShortener models.URLShortener
+	result := config.DB.Model(&models.URLShortener{}).First(&urlShortener, "api_key IS NOT NULL")
 	if result.Error != nil {
 		t.Fatalf("Error ")
 	}
@@ -230,13 +233,13 @@ func TestPreventUnathorizedDeleteShortCode(t *testing.T) {
 }
 
 func TestExpiredUrl(t *testing.T) {
-	if err := initDB(); err != nil {
+	if err := config.InitDB(); err != nil {
 		t.Fatalf("Failed to initialize database: %v", err)
 	}
 	r := mux.NewRouter()
-	r.HandleFunc("/redirect", redirectHandler).Methods("GET")
-	var urlShortener URLShortener
-	result := db.Model(&URLShortener{}).First(&urlShortener, "api_key IS NOT NULL AND expired_at < ? AND deleted_at IS NULL", time.Now())
+	r.HandleFunc("/redirect", handlers.RedirectHandler).Methods("GET")
+	var urlShortener models.URLShortener
+	result := config.DB.Model(&models.URLShortener{}).First(&urlShortener, "api_key IS NOT NULL AND expired_at < ? AND deleted_at IS NULL", time.Now())
 	if result.Error != nil {
 		t.Fatalf("Error in db ")
 	}
@@ -255,18 +258,18 @@ func TestExpiredUrl(t *testing.T) {
 }
 
 func TestCustomCodeExists(t *testing.T) {
-	if err := initDB(); err != nil {
+	if err := config.InitDB(); err != nil {
 		t.Fatalf("Failed to initialize database: %v", err)
 	}
-	randomUrl := "http://www." + generateShortCode(7) + ".com/" + generateShortCode(4)
-	var urlShortner URLShortener
-	result := db.Model(&URLShortener{}).First(&urlShortner, "deleted_at IS NULL")
+	randomUrl := "http://www." + utils.GenerateShortCode(7) + ".com/" + utils.GenerateShortCode(4)
+	var urlShortner models.URLShortener
+	result := config.DB.Model(&models.URLShortener{}).First(&urlShortner, "deleted_at IS NULL")
 	if result.Error != nil {
 		t.Fatal("DB error")
 	}
 	fmt.Printf("short code %s", urlShortner.ShortCode)
 	r := mux.NewRouter()
-	r.HandleFunc("/shorten", shortenHandler).Methods("POST")
+	r.HandleFunc("/shorten", handlers.ShortenHandler).Methods("POST")
 
 	shortenReqPayload := map[string]string{"long_url": randomUrl, "custom_code": urlShortner.ShortCode}
 	reqBody, _ := json.Marshal(shortenReqPayload)
@@ -284,12 +287,12 @@ func TestCustomCodeExists(t *testing.T) {
 }
 
 func TestBulkShorten(t *testing.T) {
-	if err := initDB(); err != nil {
+	if err := config.InitDB(); err != nil {
 		t.Fatalf("Failed to initialize database: %v", err)
 	}
 
 	r := mux.NewRouter()
-	r.HandleFunc("/shorten-bulk", shortenBulkHandler).Methods("POST")
+	r.HandleFunc("/shorten-bulk", handlers.ShortenBulkHandler).Methods("POST")
 	jsonPayload := `{
     "urls": [
         {
@@ -313,8 +316,8 @@ func TestBulkShorten(t *testing.T) {
 	// }
 
 	// reqBody, _ := json.Marshal(jsonPayload)
-	var user User
-	result := db.Model(&User{}).First(&user, "tier = 'enterprise'")
+	var user models.User
+	result := config.DB.Model(&models.User{}).First(&user, "tier = 'enterprise'")
 	if result.Error != nil {
 		t.Fatal("DB error")
 	}
@@ -334,12 +337,12 @@ func TestBulkShorten(t *testing.T) {
 }
 
 func TestPreventUnauthorisedBulkShorten(t *testing.T) {
-	if err := initDB(); err != nil {
+	if err := config.InitDB(); err != nil {
 		t.Fatalf("Failed to initialize database: %v", err)
 	}
 
 	r := mux.NewRouter()
-	r.HandleFunc("/shorten-bulk", shortenBulkHandler).Methods("POST")
+	r.HandleFunc("/shorten-bulk", handlers.ShortenBulkHandler).Methods("POST")
 	jsonPayload := `{
     "urls": [
         {
@@ -363,8 +366,8 @@ func TestPreventUnauthorisedBulkShorten(t *testing.T) {
 	// }
 
 	// reqBody, _ := json.Marshal(jsonPayload)
-	var user User
-	result := db.Model(&User{}).First(&user, "tier = 'hobby'")
+	var user models.User
+	result := config.DB.Model(&models.User{}).First(&user, "tier = 'hobby'")
 	if result.Error != nil {
 		t.Fatal("DB error")
 	}
@@ -384,7 +387,7 @@ func TestPreventUnauthorisedBulkShorten(t *testing.T) {
 }
 
 func TestRedirectExpiry(t *testing.T) {
-	if err := initDB(); err != nil {
+	if err := config.InitDB(); err != nil {
 		t.Fatalf("Failed to initialize database: %v", err)
 	}
 
@@ -392,15 +395,15 @@ func TestRedirectExpiry(t *testing.T) {
 	yesterday := now.Add(-24 * time.Hour)
 	yesterdayISO := yesterday.Format(time.RFC3339)
 
-	var urlShortner URLShortener
-	db.Model(&URLShortener{}).First(&urlShortner, "expired_at is null and api_key is not null and deleted_at is null")
+	var urlShortner models.URLShortener
+	config.DB.Model(&models.URLShortener{}).First(&urlShortner, "expired_at is null and api_key is not null and deleted_at is null")
 	fmt.Printf("date : %s\n", urlShortner.ApiKey)
 	fmt.Printf("date : %s\n", urlShortner.ShortCode)
 	fmt.Printf("date : %s\n", urlShortner.OriginalURL)
 	fmt.Printf("date : %s\n", yesterdayISO)
 
 	r := mux.NewRouter()
-	r.HandleFunc("/redirect", editRedirectExpiryHandler).Methods("PATCH")
+	r.HandleFunc("/redirect", handlers.EditRedirectExpiryHandler).Methods("PATCH")
 	redirectURL := "/redirect?code=" + urlShortner.ShortCode
 	ReqPayload := map[string]string{"expired_at": yesterdayISO}
 	reqBody, _ := json.Marshal(ReqPayload)
@@ -419,14 +422,14 @@ func TestRedirectExpiry(t *testing.T) {
 }
 
 func TestPasswordProtectedCode(t *testing.T) {
-	if err := initDB(); err != nil {
+	if err := config.InitDB(); err != nil {
 		t.Fatalf("Failed to initialize database: %v", err)
 	}
-	var urlShortner URLShortener
-	db.Model(&URLShortener{}).First(&urlShortner, "expired_at is null and api_key is not null and deleted_at is null and password is not null")
+	var urlShortner models.URLShortener
+	config.DB.Model(&models.URLShortener{}).First(&urlShortner, "expired_at is null and api_key is not null and deleted_at is null and password is not null")
 
 	r := mux.NewRouter()
-	r.HandleFunc("/redirect", redirectHandler).Methods("GET")
+	r.HandleFunc("/redirect", handlers.RedirectHandler).Methods("GET")
 	redirectURL := "/redirect?code=" + urlShortner.ShortCode
 	ReqPayload := map[string]string{"password": *urlShortner.Password + *urlShortner.Password}
 	reqBody, _ := json.Marshal(ReqPayload)
@@ -445,11 +448,11 @@ func TestPasswordProtectedCode(t *testing.T) {
 }
 
 func TestGetUserUrls(t *testing.T) {
-	if err := initDB(); err != nil {
+	if err := config.InitDB(); err != nil {
 		t.Fatalf("Failed to initialize database: %v", err)
 	}
 	r := mux.NewRouter()
-	r.HandleFunc("/users/url", getUserUrlsHandler).Methods("GET")
+	r.HandleFunc("/users/url", handlers.GetUserUrlsHandler).Methods("GET")
 	req := httptest.NewRequest(http.MethodGet, "/users/url", nil)
 	req.Header.Set("Content-Type", "application/json")
 	req.Header.Set("api_key", "234786100")
