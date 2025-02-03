@@ -1,12 +1,13 @@
 package main
 
 import (
-	"M2A1-URL-Shortner/handlers"
 	"fmt"
 	"log"
 	"net/http"
 
 	"M2A1-URL-Shortner/config"
+	"M2A1-URL-Shortner/handlers"
+	middleware "M2A1-URL-Shortner/middlewares"
 
 	"github.com/gorilla/mux"
 )
@@ -24,6 +25,9 @@ func main() {
 
 	// Initialize the router
 	r := mux.NewRouter()
+
+	r.Use(middleware.LoggingMiddleware)
+
 	// r.HandleFunc("/redirect", handlers.RedirectHandler).Methods("GET")
 	r.HandleFunc("/shorten", handlers.ShortenHandler).Methods("POST")
 	r.HandleFunc("/redirect", handlers.EditRedirectExpiryHandler).Methods("PATCH")
