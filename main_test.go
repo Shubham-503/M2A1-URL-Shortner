@@ -11,6 +11,7 @@ import (
 
 	"M2A1-URL-Shortner/config"
 	"M2A1-URL-Shortner/handlers"
+	middleware "M2A1-URL-Shortner/middlewares"
 	"M2A1-URL-Shortner/models"
 	"M2A1-URL-Shortner/utils"
 
@@ -42,7 +43,8 @@ func TestURLShortenerAndRedirect(t *testing.T) {
 	}
 
 	r := mux.NewRouter()
-	r.HandleFunc("/shorten", handlers.ShortenHandler).Methods("POST")
+	// r.HandleFunc("/shorten", handlers.ShortenHandler).Methods("POST")
+	r.Handle("/shorten", middleware.AuthenticateAPIKey(http.HandlerFunc(handlers.ShortenHandler))).Methods("POST")
 	r.HandleFunc("/redirect", handlers.RedirectHandler).Methods("GET")
 
 	shortenReqPayload := map[string]string{"long_url": "https://example.com"}
@@ -50,7 +52,8 @@ func TestURLShortenerAndRedirect(t *testing.T) {
 
 	req := httptest.NewRequest(http.MethodPost, "/shorten", bytes.NewBuffer(reqBody))
 	req.Header.Set("Content-Type", "application/json")
-	apiKey := fmt.Sprint(time.Time.Nanosecond(time.Now()))
+	// apiKey := fmt.Sprint(time.Time.Nanosecond(time.Now()))
+	apiKey := "234786100"
 	req.Header.Set("api_key", apiKey)
 	resp := httptest.NewRecorder()
 
@@ -106,7 +109,8 @@ func TestDuplcateUrl(t *testing.T) {
 
 	shortenReqPayload := map[string]string{"long_url": randomUrl}
 	reqBody, _ := json.Marshal(shortenReqPayload)
-	apiKey1 := fmt.Sprint(time.Time.Nanosecond(time.Now()))
+	// apiKey1 := fmt.Sprint(time.Time.Nanosecond(time.Now()))
+	apiKey1 := "234786100"
 	req := httptest.NewRequest(http.MethodPost, "/shorten", bytes.NewBuffer(reqBody))
 	req.Header.Set("Content-Type", "application/json")
 	req.Header.Set("api_key", apiKey1)
@@ -119,7 +123,8 @@ func TestDuplcateUrl(t *testing.T) {
 	}
 
 	req2 := httptest.NewRequest(http.MethodPost, "/shorten", bytes.NewBuffer(reqBody))
-	apiKey2 := fmt.Sprint(time.Time.Nanosecond(time.Now()))
+	// apiKey2 := fmt.Sprint(time.Time.Nanosecond(time.Now()))
+	apiKey2 := "234786100"
 	req2.Header.Set("Content-Type", "application/json")
 	req2.Header.Set("api_key", apiKey2)
 	// req2.Header.Set("api_key", "test12345")
@@ -273,7 +278,8 @@ func TestCustomCodeExists(t *testing.T) {
 
 	shortenReqPayload := map[string]string{"long_url": randomUrl, "custom_code": urlShortner.ShortCode}
 	reqBody, _ := json.Marshal(shortenReqPayload)
-	apiKey1 := fmt.Sprint(time.Time.Nanosecond(time.Now()))
+	// apiKey1 := fmt.Sprint(time.Time.Nanosecond(time.Now()))
+	apiKey1 := "234786100"
 	req := httptest.NewRequest(http.MethodPost, "/shorten", bytes.NewBuffer(reqBody))
 	req.Header.Set("Content-Type", "application/json")
 	req.Header.Set("api_key", apiKey1)

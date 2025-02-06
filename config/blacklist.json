@@ -1,0 +1,8 @@
+{
+  "blacklisted_api_keys": [
+    "blacklisted_api_key_1",
+    "blacklisted_api_key_2",
+    " ::1",
+    "::1"
+  ]
+}

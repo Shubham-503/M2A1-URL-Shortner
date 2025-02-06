@@ -1,6 +1,7 @@
 package handlers
 
 import (
+	"M2A1-URL-Shortner/middlewares"
 	"M2A1-URL-Shortner/models"
 	"bytes"
 	"encoding/json"
@@ -24,26 +25,17 @@ func ShortenHandler(w http.ResponseWriter, r *http.Request) {
 		Password   *string    `json:"password,omitempty"`
 	}
 
-	// Retrieve the API key from the request headers
-	apiKey := r.Header.Get("api_key")
-	if apiKey == "" {
-		http.Error(w, "Please pass api_key", http.StatusUnauthorized)
+	// var user models.User
+	// Retrieve the user from the context
+	user, ok := r.Context().Value(middlewares.UserContextKey).(*models.User)
+	if !ok || user == nil {
+		http.Error(w, "User not found in context", http.StatusInternalServerError)
 		return
 	}
-
-	var user models.User
-	result := config.DB.Model(&models.User{}).First(&user, "api_key = ?", apiKey)
-	if result.RowsAffected == 0 {
-		newUser := models.User{
-			ApiKey: apiKey,
-		}
-		result = config.DB.Model(&models.User{}).Create(&newUser)
-		user = newUser
-		fmt.Printf("userId:  %d\n", user.ID)
-		if result.Error != nil {
-			http.Error(w, "Error occured in creating user", http.StatusInternalServerError)
-			return
-		}
+	apiKey, ok := r.Context().Value(middlewares.APIContextKey).(string)
+	if !ok || apiKey == "" {
+		http.Error(w, "apiKey not found in context", http.StatusInternalServerError)
+		return
 	}
 
 	// Decode the JSON request body into the request struct
@@ -71,7 +63,7 @@ func ShortenHandler(w http.ResponseWriter, r *http.Request) {
 	// Create a new URLShortener record with the original URL, short code, and API key
 	// TODO: Check if expired_at default value
 	fmt.Printf("userId before url_shortner insertion:  %d\n", user.ID)
-	fmt.Printf("userId before url_shortner insertion:  %v\n", request.Password)
+	fmt.Printf("request.Password before url_shortner insertion:  %v\n", request.Password)
 	urlShortener := models.URLShortener{
 		OriginalURL: request.LongURL,
 		ShortCode:   shortCode,
@@ -82,7 +74,7 @@ func ShortenHandler(w http.ResponseWriter, r *http.Request) {
 	}
 
 	// Save the URLShortener record to the database
-	result = config.DB.Create(&urlShortener)
+	result := config.DB.Create(&urlShortener)
 	if result.Error != nil {
 		http.Error(w, "Error in saving", http.StatusInternalServerError)
 		return
@@ -255,21 +247,14 @@ func ShortenBulkHandler(w http.ResponseWriter, r *http.Request) {
 
 	var user models.User
 	result := config.DB.Model(&models.User{}).First(&user, "api_key = ?", apiKey)
-	if user.Tier != "enterprise" {
-		http.Error(w, "Access denied: bulk creation is only available for enterprise users", http.StatusForbidden)
+	fmt.Print(result)
+	if result.RowsAffected == 0 {
+		http.Error(w, "Please provide a valid api key", http.StatusUnauthorized)
 		return
 	}
-	if result.RowsAffected == 0 {
-		newUser := models.User{
-			ApiKey: apiKey,
-		}
-		result = config.DB.Model(&models.User{}).Create(&newUser)
-		user = newUser
-		fmt.Printf("userId:  %d\n", user.ID)
-		if result.Error != nil {
-			http.Error(w, "Error occured in creating user", http.StatusInternalServerError)
-			return
-		}
+	if result.Error != nil {
+		http.Error(w, "DB Error", http.StatusInternalServerError)
+		return
 	}
 
 	var successes []map[string]string

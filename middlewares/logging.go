@@ -19,7 +19,7 @@ var (
 	ErrorLogger *log.Logger
 )
 
-// ininLoggers initializes loggers for audit, debug and error logs.
+// initLoggers initializes loggers for audit, debug and error logs.
 func initLoggers() {
 	// Ensure the log directiories exist
 	createLogDir("logs/audit")
@@ -41,7 +41,7 @@ func createLogDir(dir string) {
 		MaxSize:    1,
 		MaxBackups: 3,
 		MaxAge:     28,
-		Compress:   true,
+		Compress:   false,
 	}
 
 	// Setup Lumberjack for debug logs
@@ -51,7 +51,7 @@ func createLogDir(dir string) {
 		MaxSize:    1,
 		MaxBackups: 3,
 		MaxAge:     28,
-		Compress:   true,
+		Compress:   false,
 	}
 
 	// Setup Lumberjack for error logs
@@ -61,7 +61,7 @@ func createLogDir(dir string) {
 		MaxSize:    1,
 		MaxBackups: 3,
 		MaxAge:     28,
-		Compress:   true,
+		Compress:   false,
 	}
 
 	// Create loggers with appropriate prefoxes and flags
@@ -77,6 +77,7 @@ func init() {
 // LoggingMiddleware logs audit information for every request.
 func LoggingMiddleware(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		start := time.Now()
 		timestamp := time.Now().Format(time.RFC3339)
 		method := r.Method
 		url := r.URL.String()
@@ -87,6 +88,8 @@ func LoggingMiddleware(next http.Handler) http.Handler {
 		AuditLogger.Printf("Time: %s | Method: %s | URL: %s | User-Agent: %s | IP: %s", timestamp, method, url, userAgent, ip)
 
 		next.ServeHTTP(w, r)
+		AuditLogger.Printf("LoggingMiddleware Time Taken: %s", time.Since(start))
+
 	})
 
 }
