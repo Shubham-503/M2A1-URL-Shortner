@@ -52,3 +52,14 @@ AUDIT: 2025/02/05 13:01:48 Time: 2025-02-05T13:01:48+05:30 | Method: OPTIONS | U
 AUDIT: 2025/02/05 13:01:48 LoggingMiddleware Time Taken: 548.5µs
 AUDIT: 2025/02/05 22:16:51 Time: 2025-02-05T22:16:51+05:30 | Method: GET | URL: /redirect?code=iDFOVu | User-Agent: PostmanRuntime/7.43.0 | IP: ::1
 AUDIT: 2025/02/05 22:16:51 LoggingMiddleware Time Taken: 2.9735ms
+AUDIT: 2025/02/06 08:33:53 AuthenticateAPIKey Time Taken: 9.4345ms
+AUDIT: 2025/02/06 20:10:21 Time: 2025-02-06T20:10:21+05:30 | Method: OPTIONS | URL: /challenges | User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/132.0.0.0 Safari/537.36 | IP: ::1
+AUDIT: 2025/02/06 20:10:21 LoggingMiddleware Time Taken: 7.179ms
+AUDIT: 2025/02/06 21:09:21 Time: 2025-02-06T21:09:21+05:30 | Method: OPTIONS | URL: /challenges | User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/132.0.0.0 Safari/537.36 | IP: ::1
+AUDIT: 2025/02/06 21:09:21 LoggingMiddleware Time Taken: 3.2028ms
+AUDIT: 2025/02/06 21:41:28 Time: 2025-02-06T21:41:28+05:30 | Method: OPTIONS | URL: /challenges | User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/132.0.0.0 Safari/537.36 | IP: ::1
+AUDIT: 2025/02/06 21:41:28 LoggingMiddleware Time Taken: 873.6µs
+AUDIT: 2025/02/06 23:34:27 Time: 2025-02-06T23:34:27+05:30 | Method: OPTIONS | URL: /challenges | User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/132.0.0.0 Safari/537.36 | IP: ::1
+AUDIT: 2025/02/06 23:34:27 LoggingMiddleware Time Taken: 1.134ms
+AUDIT: 2025/02/07 07:54:00 Time: 2025-02-07T07:54:00+05:30 | Method: OPTIONS | URL: /challenges | User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/132.0.0.0 Safari/537.36 | IP: ::1
+AUDIT: 2025/02/07 07:54:00 LoggingMiddleware Time Taken: 1.0529ms
