@@ -6,6 +6,7 @@ import (
 	"net/http"
 	"time"
 
+	"M2A1-URL-Shortner/cache"
 	"M2A1-URL-Shortner/config"
 	"M2A1-URL-Shortner/handlers"
 	middleware "M2A1-URL-Shortner/middlewares"
@@ -16,8 +17,9 @@ import (
 	"github.com/gorilla/mux"
 )
 
-func main() {
+var URLCache *cache.URLCache
 
+func main() {
 	// To initialize Sentry's handler, you need to initialize Sentry itself beforehand
 	if err := sentry.Init(sentry.ClientOptions{
 		Dsn: "https://940806d8985f563b0def7c5b42ae03f8@o4508764232220672.ingest.us.sentry.io/4508764262301696",
@@ -37,6 +39,13 @@ func main() {
 	if err != nil {
 		log.Fatalf("Failed to initialize the database: %v", err)
 	}
+
+	// var err error
+	URLCache, err := cache.NewBigCacheStore()
+	if err != nil {
+		panic("Failed to initialize cache: " + err.Error())
+	}
+	handlers.URLCache = URLCache
 
 	// Serve static files using mux
 	staticDir := "./static/"

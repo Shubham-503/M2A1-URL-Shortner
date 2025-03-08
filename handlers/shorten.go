@@ -1,6 +1,7 @@
 package handlers
 
 import (
+	"M2A1-URL-Shortner/cache"
 	"M2A1-URL-Shortner/middlewares"
 	"M2A1-URL-Shortner/models"
 	"bytes"
@@ -15,6 +16,8 @@ import (
 
 	"gorm.io/gorm"
 )
+
+var URLCache cache.URLCache
 
 // Handler to shorten URLs
 func ShortenHandler(w http.ResponseWriter, r *http.Request) {
@@ -104,53 +107,76 @@ func ShortenHandler(w http.ResponseWriter, r *http.Request) {
 }
 
 func RedirectHandler(w http.ResponseWriter, r *http.Request) {
+
 	queryParams := r.URL.Query()
 	shortCode := queryParams.Get("code")
 	password := queryParams.Get("password")
 
 	var urlShortener models.URLShortener
-	// Use GORM to query the original URL based on the short code
-	result := config.DB.Model(&models.URLShortener{}).Where("short_code = ?  AND deleted_at IS NULL", shortCode).First(&urlShortener)
 
-	if result.Error != nil {
-		fmt.Println("errors ::")
-		fmt.Print(result.Error.Error())
+	// 1. Check Cache First
+	if data, err := URLCache.Get(shortCode); err == nil {
+		// Cache hit: Decode JSON into struct
+		if data.Password != nil && *data.Password != password {
+			http.Error(w, "Please pass password", http.StatusUnauthorized)
+			return
+		}
+		if data.ExpiredAt != nil && data.ExpiredAt.Before(time.Now()) {
+			http.Error(w, "Short code has expired", http.StatusGone)
+			return
+		}
+
+		response := map[string]string{"long_url": data.OriginalURL}
+		w.Header().Set("Content-Type", "application/json")
+		// Set header to indicate a cache hit.
+		w.Header().Set("X-Cache", "HIT")
+		json.NewEncoder(w).Encode(response)
+	} else {
+		// Use GORM to query the original URL based on the short code
+		result := config.DB.Model(&models.URLShortener{}).Where("short_code = ?  AND deleted_at IS NULL", shortCode).First(&urlShortener)
+		if result.Error != nil {
+			fmt.Println("errors ::")
+			fmt.Print(result.Error.Error())
+		}
+
+		if urlShortener.Password != nil && *urlShortener.Password != password {
+			http.Error(w, "Please pass password", http.StatusUnauthorized)
+			return
+		}
+
+		if result.RowsAffected == 0 {
+			http.Error(w, "Short code not found", http.StatusNotFound)
+			return
+		}
+
+		if urlShortener.ExpiredAt != nil && urlShortener.ExpiredAt.Before(time.Now()) {
+			http.Error(w, "Short code has expired", http.StatusGone)
+			return
+		}
+
+		if result.Error != nil {
+			fmt.Printf("error %s", result.Error.Error())
+			http.Error(w, "DB error", http.StatusInternalServerError)
+			return
+		}
+
+		// increment hit_count and update last_accessed_at column
+		// TODO: Try to use single config.DB query
+		// TODO: Update last_accessed_at and hit-count for cache hit too
+		result = config.DB.Model(&models.URLShortener{}).Where("short_code = ? AND deleted_at IS NULL", shortCode).Update("last_accessed_at", time.Now()).Update("hit_count", urlShortener.HitCount+1)
+		if result.Error != nil {
+			fmt.Printf("Error in update: %s", result.Error.Error())
+			return
+		}
+
+		// Redirect the user to the original URL
+		response := map[string]string{"long_url": urlShortener.OriginalURL}
+		w.Header().Set("Content-Type", "application/json")
+		// Set header to indicate a cache miss.
+		w.Header().Set("X-Cache", "MISS")
+		json.NewEncoder(w).Encode(response)
+		// http.Redirect(w, r, urlShortener.OriginalURL, http.StatusFound)
 	}
-
-	if urlShortener.Password != nil && *urlShortener.Password != password {
-		http.Error(w, "Please pass password", http.StatusUnauthorized)
-		return
-	}
-
-	if result.RowsAffected == 0 {
-		http.Error(w, "Short code not found", http.StatusNotFound)
-		return
-	}
-
-	if urlShortener.ExpiredAt != nil && urlShortener.ExpiredAt.Before(time.Now()) {
-		http.Error(w, "Short code has expired", http.StatusGone)
-		return
-	}
-
-	if result.Error != nil {
-		fmt.Printf("error %s", result.Error.Error())
-		http.Error(w, "DB error", http.StatusInternalServerError)
-		return
-	}
-
-	// increment hit_count and update last_accessed_at column
-	// TODO: Try to use single config.DB query
-	result = config.DB.Model(&models.URLShortener{}).Where("short_code = ? AND deleted_at IS NULL", shortCode).Update("last_accessed_at", time.Now()).Update("hit_count", urlShortener.HitCount+1)
-	if result.Error != nil {
-		fmt.Printf("Error in update: %s", result.Error.Error())
-		return
-	}
-
-	// Redirect the user to the original URL
-	response := map[string]string{"long_url": urlShortener.OriginalURL}
-	w.Header().Set("Content-Type", "application/json")
-	json.NewEncoder(w).Encode(response)
-	// http.Redirect(w, r, urlShortener.OriginalURL, http.StatusFound)
 }
 
 func EditRedirectExpiryHandler(w http.ResponseWriter, r *http.Request) {

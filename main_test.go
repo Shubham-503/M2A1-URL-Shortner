@@ -9,6 +9,7 @@ import (
 	"testing"
 	"time"
 
+	"M2A1-URL-Shortner/cache"
 	"M2A1-URL-Shortner/config"
 	"M2A1-URL-Shortner/handlers"
 	middleware "M2A1-URL-Shortner/middlewares"
@@ -36,6 +37,39 @@ import (
 
 // 	return nil
 // }
+
+func TestRedirectCaching(t *testing.T) {
+	if err := config.InitDB(); err != nil {
+		t.Fatalf("Failed to initialize database: %v", err)
+	}
+	shortCode := "iDFOVu"
+	longURL := "http://www.wLuo8gr.com/wLuo"
+
+	testCache, err := cache.NewBigCacheStore()
+	if err != nil {
+		t.Fatalf("failed to initialize cache: %v", err)
+	}
+	if err := testCache.Set(shortCode, models.URLShortener{OriginalURL: longURL}); err != nil {
+		t.Fatalf("failed to set cache: %v", err)
+	}
+
+	handlers.URLCache = testCache
+
+	r := mux.NewRouter()
+	r.HandleFunc("/redirect", handlers.RedirectHandler).Methods("GET")
+	redirectURL := "/redirect?code=" + shortCode
+	req := httptest.NewRequest(http.MethodGet, redirectURL, nil)
+	req.Header.Set("api_key", "test12345")
+	resp := httptest.NewRecorder()
+	r.ServeHTTP(resp, req)
+	if resp.Header().Get("X-Cache") != "HIT" {
+		t.Errorf("expected X-Cache header to be HIT, got %s", resp.Header().Get("X-Cache"))
+	}
+	if resp.Code != http.StatusOK {
+		t.Fatalf("Expected status code 200, got %d", resp.Code)
+	}
+
+}
 
 func TestURLShortenerAndRedirect(t *testing.T) {
 	if err := config.InitDB(); err != nil {
