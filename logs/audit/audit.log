@@ -120,3 +120,17 @@ AUDIT: 2025/03/15 12:04:23 Time: 2025-03-15T12:04:23+05:30 | Method: GET | URL: 
 AUDIT: 2025/03/15 12:04:23 LoggingMiddleware Time Taken: 2.8087ms
 AUDIT: 2025/03/15 12:04:49 Time: 2025-03-15T12:04:49+05:30 | Method: GET | URL: /redirect?code=7ch4BC | User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/133.0.0.0 Safari/537.36 | IP: ::1
 AUDIT: 2025/03/15 12:04:49 LoggingMiddleware Time Taken: 0s
+AUDIT: 2025/03/15 12:17:45 Time: 2025-03-15T12:17:45+05:30 | Method: GET | URL: /redirect?code=7ch4BC | User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/133.0.0.0 Safari/537.36 | IP: ::1
+AUDIT: 2025/03/15 12:17:45 LoggingMiddleware Time Taken: 21.9376ms
+AUDIT: 2025/03/15 12:17:51 Time: 2025-03-15T12:17:51+05:30 | Method: GET | URL: /redirect?code=7ch4BC | User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/133.0.0.0 Safari/537.36 | IP: ::1
+AUDIT: 2025/03/15 12:17:51 LoggingMiddleware Time Taken: 506.8µs
+AUDIT: 2025/03/15 12:17:53 Time: 2025-03-15T12:17:53+05:30 | Method: GET | URL: /redirect?code=7ch4BC | User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/133.0.0.0 Safari/537.36 | IP: ::1
+AUDIT: 2025/03/15 12:17:53 LoggingMiddleware Time Taken: 508.5µs
+AUDIT: 2025/03/15 12:17:54 Time: 2025-03-15T12:17:54+05:30 | Method: GET | URL: /redirect?code=7ch4BC | User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/133.0.0.0 Safari/537.36 | IP: ::1
+AUDIT: 2025/03/15 12:17:54 LoggingMiddleware Time Taken: 506.3µs
+AUDIT: 2025/03/15 13:32:06 Time: 2025-03-15T13:32:06+05:30 | Method: GET | URL: /redirect?code=7ch4BC | User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/133.0.0.0 Safari/537.36 | IP: ::1
+AUDIT: 2025/03/15 13:32:06 LoggingMiddleware Time Taken: 33.5205ms
+AUDIT: 2025/03/15 13:32:07 Time: 2025-03-15T13:32:07+05:30 | Method: GET | URL: /redirect?code=7ch4BC | User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/133.0.0.0 Safari/537.36 | IP: ::1
+AUDIT: 2025/03/15 13:32:07 LoggingMiddleware Time Taken: 2.7702ms
+AUDIT: 2025/03/15 13:32:08 Time: 2025-03-15T13:32:08+05:30 | Method: GET | URL: /redirect?code=7ch4BC | User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/133.0.0.0 Safari/537.36 | IP: ::1
+AUDIT: 2025/03/15 13:32:08 LoggingMiddleware Time Taken: 3.0778ms

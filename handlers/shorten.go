@@ -17,7 +17,7 @@ import (
 	"gorm.io/gorm"
 )
 
-var URLCache cache.URLCache
+var URLCache cache.RedisURLCache
 
 // Handler to shorten URLs
 func ShortenHandler(w http.ResponseWriter, r *http.Request) {

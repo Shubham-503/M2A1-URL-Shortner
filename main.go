@@ -41,11 +41,18 @@ func main() {
 	}
 
 	// var err error
-	URLCache, err := cache.NewBigCacheStore()
+	// URLCache, err := cache.NewBigCacheStore()
+	// if err != nil {
+	// 	panic("Failed to initialize cache: " + err.Error())
+	// }
+	// handlers.URLCache = URLCache
+
+	// Initialize Redis cache.
+	redisStore, err := cache.NewRedisStore("localhost:6379", "", 0)
 	if err != nil {
-		panic("Failed to initialize cache: " + err.Error())
+		log.Fatalf("Failed to initialize Redis cache: %v", err)
 	}
-	handlers.URLCache = URLCache
+	handlers.URLCache = redisStore
 
 	// Serve static files using mux
 	staticDir := "./static/"
