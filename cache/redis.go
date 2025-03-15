@@ -17,8 +17,8 @@ type RedisURLCache interface {
 
 // RedisStore is an implementation of URLCache using Redis.
 type RedisStore struct {
-	client *redis.Client
-	ctx    context.Context
+	Client *redis.Client
+	Ctx    context.Context
 }
 
 // NewRedisStore initializes a new RedisStore instance.
@@ -37,8 +37,8 @@ func NewRedisStore(addr, password string, db int) (*RedisStore, error) {
 	}
 
 	return &RedisStore{
-		client: rdb,
-		ctx:    ctx,
+		Client: rdb,
+		Ctx:    ctx,
 	}, nil
 }
 
@@ -48,13 +48,13 @@ func (r *RedisStore) Set(key string, value models.URLShortener) error {
 	if err != nil {
 		return err
 	}
-	return r.client.Set(r.ctx, key, data, 0).Err()
+	return r.Client.Set(r.Ctx, key, data, 0).Err()
 }
 
 // Get retrieves a value from Redis.
 func (r *RedisStore) Get(key string) (models.URLShortener, error) {
 	var result models.URLShortener
-	data, err := r.client.Get(r.ctx, key).Result()
+	data, err := r.Client.Get(r.Ctx, key).Result()
 	if err != nil {
 		return result, err
 	}
@@ -64,10 +64,10 @@ func (r *RedisStore) Get(key string) (models.URLShortener, error) {
 
 // Delete removes a value from Redis.
 func (r *RedisStore) Delete(key string) error {
-	return r.client.Del(r.ctx, key).Err()
+	return r.Client.Del(r.Ctx, key).Err()
 }
 
-// Close closes the Redis client.
+// Close closes the Redis C.
 func (r *RedisStore) Close() error {
-	return r.client.Close()
+	return r.Client.Close()
 }

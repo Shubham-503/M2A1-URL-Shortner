@@ -53,7 +53,14 @@ func main() {
 		log.Fatalf("Failed to initialize Redis cache: %v", err)
 	}
 	handlers.URLCache = redisStore
+	middleware.RateLimitRedisStore = redisStore
 
+	// Initialize Redis Cache for rateLimiting
+	// IpListRedisStore, err := cache.NewRedisStore("localhost:6379", "", 0)
+	// if err != nil {
+	// 	log.Fatalf("Failed to initialize Redis cache: %v", err)
+	// }
+	// middleware.
 	// Serve static files using mux
 	staticDir := "./static/"
 	// fs := http.FileServer(http.Dir(staticDir))
@@ -65,9 +72,11 @@ func main() {
 	r.Use(sentryHandler.Handle)
 	r.Use(middleware.SentryAlertMiddleware)
 	r.Use(middleware.ResponseTimeMiddleware)
+	r.Use(middleware.RateLimitMiddleware)
 	var handler http.Handler = http.HandlerFunc(handlers.ShortenHandler)
 	handler = middleware.AuthenticateAPIKey(handler)
 	handler = middleware.BlacklistMiddleware(handler)
+	handler = middleware.APIRateLimitMiddleware(1)(handler)
 	// r.HandleFunc("/redirect", handlers.RedirectHandler).Methods("GET")
 	// r.Handle("/shorten", middleware.LoggingMiddleware(http.HandlerFunc(handlers.ShortenHandler))).Methods("POST")
 	// r.Handle("/shorten", middleware.AuthenticateAPIKey(http.HandlerFunc(handlers.ShortenHandler))).Methods("POST")
@@ -75,6 +84,7 @@ func main() {
 	r.HandleFunc("/redirect", handlers.EditRedirectExpiryHandler).Methods("PATCH")
 	r.Handle("/shorten-bulk", middleware.IsEnterprise(http.HandlerFunc(handlers.ShortenBulkHandler))).Methods("POST")
 	r.HandleFunc("/redirect", handlers.DeleteShortenHandler).Methods("DELETE")
+	r.Handle("/redirect", middleware.APIRateLimitMiddleware(50)(http.HandlerFunc(handlers.RedirectHandler))).Methods("GET")
 	r.HandleFunc("/redirect", handlers.RedirectHandler).Methods("GET")
 	r.HandleFunc("/users/url", handlers.GetUserUrlsHandler).Methods("GET")
 	r.HandleFunc("/health", handlers.HealthHandler).Methods("GET")

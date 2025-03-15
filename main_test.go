@@ -4,6 +4,7 @@ import (
 	"bytes"
 	"encoding/json"
 	"fmt"
+	"log"
 	"net/http"
 	"net/http/httptest"
 	"testing"
@@ -38,6 +39,63 @@ import (
 // 	return nil
 // }
 
+// TestRateLimiter simulates 105 requests from the same IP and checks that rate limiting occurs.
+func TestRateLimiter(t *testing.T) {
+
+	if err := config.InitDB(); err != nil {
+		t.Fatalf("Failed to initialize database: %v", err)
+	}
+	redisStore, err := cache.NewRedisStore("localhost:6379", "", 0)
+	if err != nil {
+		log.Fatalf("Failed to initialize Redis cache: %v", err)
+	}
+	handlers.URLCache = redisStore
+	middleware.RateLimitRedisStore = redisStore
+	// Flush the test DB.
+	if err := redisStore.Client.FlushDB(redisStore.Ctx).Err(); err != nil {
+		t.Fatalf("failed to flush redis: %v", err)
+	}
+	middleware.RateLimitRedisStore = redisStore
+
+	// Create a simple test handler that returns 200 OK.
+	testHandler := http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		w.Write([]byte("OK"))
+	})
+
+	// Wrap the test handler with the RateLimitMiddleware.
+	r := mux.NewRouter()
+	r.Handle("/", middleware.RateLimitMiddleware(testHandler))
+
+	// Create a test server.
+	ts := httptest.NewServer(r)
+	defer ts.Close()
+
+	// Create a test request with a fixed IP using the X-Forwarded-For header.
+	client := &http.Client{}
+	req, err := http.NewRequest("GET", ts.URL, nil)
+	if err != nil {
+		t.Fatal(err)
+	}
+	req.Header.Set("X-Forwarded-For", "1.2.3.4")
+
+	// Send 105 requests and record responses.
+	var lastStatus int
+	for i := 1; i <= 105; i++ {
+		resp, err := client.Do(req)
+		if err != nil {
+			t.Fatalf("request %d failed: %v", i, err)
+		}
+		lastStatus = resp.StatusCode
+		resp.Body.Close()
+		// Optionally, add a small delay to mimic real traffic (not required).
+		time.Sleep(10 * time.Millisecond)
+	}
+
+	// Expect that after 100 requests, we receive HTTP 429 Too Many Requests.
+	if lastStatus != http.StatusTooManyRequests {
+		t.Errorf("expected status %d for request 105, got %d", http.StatusTooManyRequests, lastStatus)
+	}
+}
 func TestRedirectPerformance(t *testing.T) {
 	println("test started")
 	if err := config.InitDB(); err != nil {
