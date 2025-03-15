@@ -36,6 +36,11 @@ func NewRedisStore(addr, password string, db int) (*RedisStore, error) {
 		return nil, err
 	}
 
+	// Set eviction policy to LRU (allkeys-lru) explicitly.
+	if err := rdb.ConfigSet(ctx, "maxmemory-policy", "allkeys-lru").Err(); err != nil {
+		return nil, err
+	}
+
 	return &RedisStore{
 		Client: rdb,
 		Ctx:    ctx,
