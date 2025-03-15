@@ -107,7 +107,7 @@ func ShortenHandler(w http.ResponseWriter, r *http.Request) {
 }
 
 func RedirectHandler(w http.ResponseWriter, r *http.Request) {
-
+	fmt.Println("redirect handler called")
 	queryParams := r.URL.Query()
 	shortCode := queryParams.Get("code")
 	password := queryParams.Get("password")
@@ -130,6 +130,10 @@ func RedirectHandler(w http.ResponseWriter, r *http.Request) {
 		w.Header().Set("Content-Type", "application/json")
 		// Set header to indicate a cache hit.
 		w.Header().Set("X-Cache", "HIT")
+		w.Header().Set("Cache-Control", "public, max-age=86400")
+		// w.Header().Set("Cache-Control", "no-store, no-cache, must-revalidate, proxy-revalidate")
+		// w.Header().Set("Pragma", "no-cache")
+		// w.Header().Set("Expires", "0")
 		json.NewEncoder(w).Encode(response)
 	} else {
 		// Use GORM to query the original URL based on the short code
@@ -138,6 +142,7 @@ func RedirectHandler(w http.ResponseWriter, r *http.Request) {
 			fmt.Println("errors ::")
 			fmt.Print(result.Error.Error())
 		}
+		URLCache.Set(shortCode, urlShortener)
 
 		if urlShortener.Password != nil && *urlShortener.Password != password {
 			http.Error(w, "Please pass password", http.StatusUnauthorized)
@@ -174,6 +179,10 @@ func RedirectHandler(w http.ResponseWriter, r *http.Request) {
 		w.Header().Set("Content-Type", "application/json")
 		// Set header to indicate a cache miss.
 		w.Header().Set("X-Cache", "MISS")
+		w.Header().Set("Cache-Control", "public, max-age=86400")
+		// w.Header().Set("Cache-Control", "no-store, no-cache, must-revalidate, proxy-revalidate")
+		// w.Header().Set("Pragma", "no-cache")
+		// w.Header().Set("Expires", "0")
 		json.NewEncoder(w).Encode(response)
 		// http.Redirect(w, r, urlShortener.OriginalURL, http.StatusFound)
 	}

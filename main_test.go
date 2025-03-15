@@ -38,6 +38,78 @@ import (
 // 	return nil
 // }
 
+func TestRedirectPerformance(t *testing.T) {
+	println("test started")
+	if err := config.InitDB(); err != nil {
+		t.Fatalf("Failed to initialize database: %v", err)
+	}
+	testCache, err := cache.NewBigCacheStore()
+	if err != nil {
+		t.Fatalf("failed to initialize cache: %v", err)
+	}
+	handlers.URLCache = testCache
+
+	shortCode := "iDFOVu"
+	// longURL := "http://www.wLuo8gr.com/wLuo"
+
+	r := mux.NewRouter()
+	r.HandleFunc("/redirect", handlers.RedirectHandler).Methods("GET")
+	redirectURL := "/redirect?code=" + shortCode
+
+	var totalTimeWithoutCache time.Duration
+	missCountWithoutCache := 0
+	req := httptest.NewRequest(http.MethodGet, redirectURL, nil)
+	for i := 0; i < 100; i++ {
+		testCache.Delete(shortCode)
+		// handlers.URLCache.Delete(shortCode)
+		req.Header.Set("api_key", "test12345")
+		resp := httptest.NewRecorder()
+		start := time.Now()
+		r.ServeHTTP(resp, req)
+		elapsed := time.Since(start)
+		totalTimeWithoutCache += elapsed
+
+		// Check the X-Cache header.
+		if resp.Header().Get("X-Cache") == "HIT" {
+			missCountWithoutCache++ // Should remain zero.
+		}
+	}
+	fmt.Printf("\nmissCountWithoutCache:: %d", missCountWithoutCache)
+
+	{
+		resp := httptest.NewRecorder()
+		r.ServeHTTP(resp, req)
+	}
+	var totalTimeWithCache time.Duration
+	hitCountWithCache := 0
+
+	for i := 0; i < 100; i++ {
+		// testCache.Delete(shortCode)
+		// handlers.URLCache.Delete(shortCode)
+		req.Header.Set("api_key", "test12345")
+		resp2 := httptest.NewRecorder()
+		start := time.Now()
+		r.ServeHTTP(resp2, req)
+		elapsed := time.Since(start)
+		totalTimeWithCache += elapsed
+
+		// Check the X-Cache header.
+		if resp2.Header().Get("X-Cache") == "HIT" {
+			hitCountWithCache++
+		}
+	}
+
+	// Print out results.
+	fmt.Printf("Without Cache: Total Time = %v over 100 calls\n", totalTimeWithoutCache)
+	fmt.Printf("With Cache: Total Time = %v over 100 calls\n", totalTimeWithCache)
+	hitRatio := float64(hitCountWithCache) / 100.0 * 100
+	fmt.Printf("Cache Hit Ratio With Cache: %.2f%% (%d hits out of 100)\n", hitRatio, hitCountWithCache)
+	fmt.Println("Performance Comparison:")
+	fmt.Printf("Without Cache: Total Time = %v\n", totalTimeWithoutCache)
+	fmt.Printf("With Cache: Total Time = %v\n", totalTimeWithCache)
+	fmt.Printf("Cache Hit Ratio (With Cache): %.2f%%\n", hitRatio)
+}
+
 func TestRedirectCaching(t *testing.T) {
 	if err := config.InitDB(); err != nil {
 		t.Fatalf("Failed to initialize database: %v", err)

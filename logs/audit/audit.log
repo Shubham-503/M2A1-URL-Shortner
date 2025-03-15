@@ -84,3 +84,39 @@ AUDIT: 2025/03/08 07:42:58 AuthenticateAPIKey Time Taken: 10.1145ms
 AUDIT: 2025/03/08 07:44:39 Time: 2025-03-08T07:44:39+05:30 | Method: GET | URL: /redirect?code=VtnqDF | User-Agent: PostmanRuntime/7.43.0 | IP: ::1
 AUDIT: 2025/03/08 07:44:39 LoggingMiddleware Time Taken: 9.366ms
 AUDIT: 2025/03/08 08:05:36 AuthenticateAPIKey Time Taken: 14.8854ms
+AUDIT: 2025/03/15 11:57:11 Time: 2025-03-15T11:57:11+05:30 | Method: GET | URL: /redirect?code=VtnqDF | User-Agent: PostmanRuntime/7.43.0 | IP: ::1
+AUDIT: 2025/03/15 11:57:11 LoggingMiddleware Time Taken: 1.653ms
+AUDIT: 2025/03/15 11:57:40 Time: 2025-03-15T11:57:40+05:30 | Method: GET | URL: /redirect?code=VtnqDF | User-Agent: PostmanRuntime/7.43.0 | IP: ::1
+AUDIT: 2025/03/15 11:57:40 LoggingMiddleware Time Taken: 509.2µs
+AUDIT: 2025/03/15 11:59:27 Time: 2025-03-15T11:59:27+05:30 | Method: GET | URL: /redirect?code=SlIF2RF | User-Agent: PostmanRuntime/7.43.0 | IP: ::1
+AUDIT: 2025/03/15 11:59:27 LoggingMiddleware Time Taken: 1.9844ms
+AUDIT: 2025/03/15 12:00:38 Time: 2025-03-15T12:00:38+05:30 | Method: GET | URL: /redirect?code=7ch4BC | User-Agent: PostmanRuntime/7.43.0 | IP: ::1
+AUDIT: 2025/03/15 12:00:38 LoggingMiddleware Time Taken: 9.7984ms
+AUDIT: 2025/03/15 12:01:02 Time: 2025-03-15T12:01:02+05:30 | Method: GET | URL: /redirect?code=7ch4BC | User-Agent: PostmanRuntime/7.43.0 | IP: ::1
+AUDIT: 2025/03/15 12:01:02 LoggingMiddleware Time Taken: 0s
+AUDIT: 2025/03/15 12:01:03 Time: 2025-03-15T12:01:03+05:30 | Method: GET | URL: /redirect?code=7ch4BC | User-Agent: PostmanRuntime/7.43.0 | IP: ::1
+AUDIT: 2025/03/15 12:01:03 LoggingMiddleware Time Taken: 0s
+AUDIT: 2025/03/15 12:01:49 Time: 2025-03-15T12:01:49+05:30 | Method: GET | URL: /redirect?code=7ch4BC | User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/133.0.0.0 Safari/537.36 | IP: ::1
+AUDIT: 2025/03/15 12:01:49 LoggingMiddleware Time Taken: 0s
+AUDIT: 2025/03/15 12:01:49 Time: 2025-03-15T12:01:49+05:30 | Method: GET | URL: /favicon.ico | User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/133.0.0.0 Safari/537.36 | IP: ::1
+AUDIT: 2025/03/15 12:01:49 LoggingMiddleware Time Taken: 0s
+AUDIT: 2025/03/15 12:02:02 Time: 2025-03-15T12:02:02+05:30 | Method: GET | URL: /redirect?code=7ch4BC | User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/133.0.0.0 Safari/537.36 | IP: ::1
+AUDIT: 2025/03/15 12:02:02 LoggingMiddleware Time Taken: 2.2741ms
+AUDIT: 2025/03/15 12:02:12 Time: 2025-03-15T12:02:12+05:30 | Method: GET | URL: /redirect?code=7ch4BC | User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/133.0.0.0 Safari/537.36 | IP: ::1
+AUDIT: 2025/03/15 12:02:12 LoggingMiddleware Time Taken: 0s
+AUDIT: 2025/03/15 12:02:14 Time: 2025-03-15T12:02:14+05:30 | Method: GET | URL: /redirect?code=7ch4BC | User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/133.0.0.0 Safari/537.36 | IP: ::1
+AUDIT: 2025/03/15 12:02:14 LoggingMiddleware Time Taken: 0s
+AUDIT: 2025/03/15 12:02:15 Time: 2025-03-15T12:02:15+05:30 | Method: GET | URL: /redirect?code=7ch4BC | User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/133.0.0.0 Safari/537.36 | IP: ::1
+AUDIT: 2025/03/15 12:02:15 LoggingMiddleware Time Taken: 0s
+AUDIT: 2025/03/15 12:04:12 Time: 2025-03-15T12:04:12+05:30 | Method: GET | URL: /redirect?code=7ch4BC | User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/133.0.0.0 Safari/537.36 | IP: ::1
+AUDIT: 2025/03/15 12:04:12 LoggingMiddleware Time Taken: 504.7µs
+AUDIT: 2025/03/15 12:04:14 Time: 2025-03-15T12:04:14+05:30 | Method: GET | URL: /redirect?code=7ch4BC | User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/133.0.0.0 Safari/537.36 | IP: ::1
+AUDIT: 2025/03/15 12:04:14 LoggingMiddleware Time Taken: 0s
+AUDIT: 2025/03/15 12:04:16 Time: 2025-03-15T12:04:16+05:30 | Method: GET | URL: /redirect?code=7ch4BC | User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/133.0.0.0 Safari/537.36 | IP: ::1
+AUDIT: 2025/03/15 12:04:16 LoggingMiddleware Time Taken: 0s
+AUDIT: 2025/03/15 12:04:17 Time: 2025-03-15T12:04:17+05:30 | Method: GET | URL: /redirect?code=7ch4BC | User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/133.0.0.0 Safari/537.36 | IP: ::1
+AUDIT: 2025/03/15 12:04:17 LoggingMiddleware Time Taken: 0s
+AUDIT: 2025/03/15 12:04:23 Time: 2025-03-15T12:04:23+05:30 | Method: GET | URL: /redirect?code=7ch4BCt | User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/133.0.0.0 Safari/537.36 | IP: ::1
+AUDIT: 2025/03/15 12:04:23 LoggingMiddleware Time Taken: 2.8087ms
+AUDIT: 2025/03/15 12:04:49 Time: 2025-03-15T12:04:49+05:30 | Method: GET | URL: /redirect?code=7ch4BC | User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/133.0.0.0 Safari/537.36 | IP: ::1
+AUDIT: 2025/03/15 12:04:49 LoggingMiddleware Time Taken: 0s
