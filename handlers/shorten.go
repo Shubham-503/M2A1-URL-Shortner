@@ -239,6 +239,13 @@ func EditRedirectExpiryHandler(w http.ResponseWriter, r *http.Request) {
 			http.Error(w, "Error in db", http.StatusInternalServerError)
 			return
 		}
+		var urlShortener models.URLShortener
+		err := config.DB.Model(&models.URLShortener{}).Where("short_code = ? AND api_key = ? AND deleted_at IS NULL", shortCode, apiKey).First(&urlShortener)
+		if err != nil {
+			http.Error(w, "Error in db", http.StatusInternalServerError)
+			return
+		}
+		URLCache.Set(shortCode, urlShortener)
 	}
 
 	response := map[string]string{"message": "Update Successfull"}
