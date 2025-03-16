@@ -9,6 +9,7 @@ import (
 	"fmt"
 	"io"
 	"net/http"
+	"strconv"
 	"time"
 
 	"M2A1-URL-Shortner/config"
@@ -432,14 +433,33 @@ func GetUserUrlsHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	pageStr := r.URL.Query().Get("page")
+	limitStr := r.URL.Query().Get("limit")
+	page, err := strconv.Atoi(pageStr)
+	if err != nil || page < 1 {
+		page = 1
+	}
+	limit, err := strconv.Atoi(limitStr)
+	if err != nil || limit < 1 {
+		limit = 10
+	}
+
+	offset := (page - 1) * limit
+
 	var urls []models.URLShortener
-	result = config.DB.Model(&models.URLShortener{}).Where("user_id = ?", user.ID).Find(&urls)
+	result = config.DB.Model(&models.URLShortener{}).Where("user_id = ?", user.ID).Limit(limit).Offset(offset).Find(&urls)
 	if result.Error != nil {
 		http.Error(w, "Error fetching URLs", http.StatusInternalServerError)
 		return
 	}
 
+	response := map[string]interface{}{
+		"page":  page,
+		"limit": limit,
+		"urls":  urls,
+	}
+
 	w.Header().Set("Content-Type", "application/json")
-	json.NewEncoder(w).Encode(urls)
+	json.NewEncoder(w).Encode(response)
 
 }
