@@ -74,6 +74,7 @@ func main() {
 	r.Use(middleware.ResponseTimeMiddleware)
 	// r.Use(middleware.RateLimitMiddleware)
 	r.Use(middleware.FreeTierMiddleware)
+	// r.Use(middleware.LeakyBucketMiddleware(5, 0.005))
 	var handler http.Handler = http.HandlerFunc(handlers.ShortenHandler)
 	handler = middleware.AuthenticateAPIKey(handler)
 	handler = middleware.BlacklistMiddleware(handler)

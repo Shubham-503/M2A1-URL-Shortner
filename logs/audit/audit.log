@@ -212,3 +212,43 @@ AUDIT: 2025/03/15 21:45:25 Time: 2025-03-15T21:45:25+05:30 | Method: GET | URL: 
 AUDIT: 2025/03/15 21:45:25 LoggingMiddleware Time Taken: 4.7522ms
 AUDIT: 2025/03/15 21:45:26 Time: 2025-03-15T21:45:26+05:30 | Method: GET | URL: /redirect?code=7ch4BC | User-Agent: PostmanRuntime/7.43.0 | IP: ::1
 AUDIT: 2025/03/15 21:45:26 LoggingMiddleware Time Taken: 1.8837ms
+AUDIT: 2025/03/15 22:05:11 Time: 2025-03-15T22:05:11+05:30 | Method: GET | URL: /redirect?code=7ch4BC | User-Agent: PostmanRuntime/7.43.0 | IP: ::1
+AUDIT: 2025/03/15 22:05:11 LoggingMiddleware Time Taken: 18.0956ms
+AUDIT: 2025/03/15 22:05:13 Time: 2025-03-15T22:05:13+05:30 | Method: GET | URL: /redirect?code=7ch4BC | User-Agent: PostmanRuntime/7.43.0 | IP: ::1
+AUDIT: 2025/03/15 22:05:13 LoggingMiddleware Time Taken: 5.1296ms
+AUDIT: 2025/03/15 22:05:17 Time: 2025-03-15T22:05:17+05:30 | Method: GET | URL: /redirect?code=7ch4BC | User-Agent: PostmanRuntime/7.43.0 | IP: ::1
+AUDIT: 2025/03/15 22:05:17 LoggingMiddleware Time Taken: 5.8342ms
+AUDIT: 2025/03/15 22:05:19 Time: 2025-03-15T22:05:19+05:30 | Method: GET | URL: /redirect?code=7ch4BC | User-Agent: PostmanRuntime/7.43.0 | IP: ::1
+AUDIT: 2025/03/15 22:05:19 LoggingMiddleware Time Taken: 11.4578ms
+AUDIT: 2025/03/15 22:05:20 Time: 2025-03-15T22:05:20+05:30 | Method: GET | URL: /redirect?code=7ch4BC | User-Agent: PostmanRuntime/7.43.0 | IP: ::1
+AUDIT: 2025/03/15 22:05:20 LoggingMiddleware Time Taken: 2.9563ms
+AUDIT: 2025/03/16 11:21:19 Time: 2025-03-16T11:21:19+05:30 | Method: GET | URL: /redirect?code=7ch4BC | User-Agent: PostmanRuntime/7.43.0 | IP: ::1
+AUDIT: 2025/03/16 11:21:19 LoggingMiddleware Time Taken: 17.0333ms
+AUDIT: 2025/03/16 11:21:22 Time: 2025-03-16T11:21:22+05:30 | Method: GET | URL: /redirect?code=7ch4BC | User-Agent: PostmanRuntime/7.43.0 | IP: ::1
+AUDIT: 2025/03/16 11:21:22 LoggingMiddleware Time Taken: 5.332ms
+AUDIT: 2025/03/16 11:21:26 Time: 2025-03-16T11:21:26+05:30 | Method: GET | URL: /redirect?code=7ch4BC | User-Agent: PostmanRuntime/7.43.0 | IP: ::1
+AUDIT: 2025/03/16 11:21:26 LoggingMiddleware Time Taken: 5.9593ms
+AUDIT: 2025/03/16 11:21:28 Time: 2025-03-16T11:21:28+05:30 | Method: GET | URL: /redirect?code=7ch4BC | User-Agent: PostmanRuntime/7.43.0 | IP: ::1
+AUDIT: 2025/03/16 11:21:28 LoggingMiddleware Time Taken: 4.4245ms
+AUDIT: 2025/03/16 11:21:29 Time: 2025-03-16T11:21:29+05:30 | Method: GET | URL: /redirect?code=7ch4BC | User-Agent: PostmanRuntime/7.43.0 | IP: ::1
+AUDIT: 2025/03/16 11:21:29 LoggingMiddleware Time Taken: 11.9007ms
+AUDIT: 2025/03/16 11:21:31 Time: 2025-03-16T11:21:31+05:30 | Method: GET | URL: /redirect?code=7ch4BC | User-Agent: PostmanRuntime/7.43.0 | IP: ::1
+AUDIT: 2025/03/16 11:21:31 LoggingMiddleware Time Taken: 4.7481ms
+AUDIT: 2025/03/16 11:22:17 Time: 2025-03-16T11:22:17+05:30 | Method: GET | URL: /redirect?code=7ch4BC | User-Agent: PostmanRuntime/7.43.0 | IP: ::1
+AUDIT: 2025/03/16 11:22:17 LoggingMiddleware Time Taken: 14.4262ms
+AUDIT: 2025/03/16 11:22:18 Time: 2025-03-16T11:22:18+05:30 | Method: GET | URL: /redirect?code=7ch4BC | User-Agent: PostmanRuntime/7.43.0 | IP: ::1
+AUDIT: 2025/03/16 11:22:18 LoggingMiddleware Time Taken: 3.5461ms
+AUDIT: 2025/03/16 11:22:20 Time: 2025-03-16T11:22:20+05:30 | Method: GET | URL: /redirect?code=7ch4BC | User-Agent: PostmanRuntime/7.43.0 | IP: ::1
+AUDIT: 2025/03/16 11:22:20 LoggingMiddleware Time Taken: 22.0669ms
+AUDIT: 2025/03/16 11:22:27 Time: 2025-03-16T11:22:27+05:30 | Method: GET | URL: /redirect?code=7ch4BC | User-Agent: PostmanRuntime/7.43.0 | IP: ::1
+AUDIT: 2025/03/16 11:22:27 LoggingMiddleware Time Taken: 4.8905ms
+AUDIT: 2025/03/16 11:22:28 Time: 2025-03-16T11:22:28+05:30 | Method: GET | URL: /redirect?code=7ch4BC | User-Agent: PostmanRuntime/7.43.0 | IP: ::1
+AUDIT: 2025/03/16 11:22:28 LoggingMiddleware Time Taken: 5.3364ms
+AUDIT: 2025/03/16 11:22:29 Time: 2025-03-16T11:22:29+05:30 | Method: GET | URL: /redirect?code=7ch4BC | User-Agent: PostmanRuntime/7.43.0 | IP: ::1
+AUDIT: 2025/03/16 11:22:29 LoggingMiddleware Time Taken: 6.6442ms
+AUDIT: 2025/03/16 11:22:30 Time: 2025-03-16T11:22:30+05:30 | Method: GET | URL: /redirect?code=7ch4BC | User-Agent: PostmanRuntime/7.43.0 | IP: ::1
+AUDIT: 2025/03/16 11:22:30 LoggingMiddleware Time Taken: 4.4688ms
+AUDIT: 2025/03/16 11:22:33 Time: 2025-03-16T11:22:33+05:30 | Method: GET | URL: /redirect?code=7ch4BC | User-Agent: PostmanRuntime/7.43.0 | IP: ::1
+AUDIT: 2025/03/16 11:22:33 LoggingMiddleware Time Taken: 3.4382ms
+AUDIT: 2025/03/16 11:22:34 Time: 2025-03-16T11:22:34+05:30 | Method: GET | URL: /redirect?code=7ch4BC | User-Agent: PostmanRuntime/7.43.0 | IP: ::1
+AUDIT: 2025/03/16 11:22:34 LoggingMiddleware Time Taken: 3.9581ms
