@@ -143,6 +143,23 @@ func RedirectHandler(w http.ResponseWriter, r *http.Request) {
 			fmt.Println("errors ::")
 			fmt.Print(result.Error.Error())
 		}
+
+		fetchOp := func() error {
+			result := config.DB.
+				Model(&models.URLShortener{}).
+				Where("short_code = ? AND deleted_at IS NULL", shortCode).
+				First(&urlShortener)
+			return result.Error
+		}
+
+		maxRetries := 3
+		initialDelay := 100 * time.Millisecond
+		if err := utils.RetryWithExponentialBackoff(fetchOp, maxRetries, initialDelay); err != nil {
+			fmt.Printf("Error fetching record from DB: %v\n", err)
+			http.Error(w, "DB error", http.StatusInternalServerError)
+			return
+		}
+
 		URLCache.Set(shortCode, urlShortener)
 
 		if urlShortener.Password != nil && *urlShortener.Password != password {
@@ -172,6 +189,16 @@ func RedirectHandler(w http.ResponseWriter, r *http.Request) {
 		result = config.DB.Model(&models.URLShortener{}).Where("short_code = ? AND deleted_at IS NULL", shortCode).Update("last_accessed_at", time.Now()).Update("hit_count", urlShortener.HitCount+1)
 		if result.Error != nil {
 			fmt.Printf("Error in update: %s", result.Error.Error())
+			return
+		}
+
+		updateOp := func() error {
+			result := config.DB.Model(&models.URLShortener{}).Where("short_code = ? AND deleted_at IS NULL", shortCode).Update("last_accessed_at", time.Now()).Update("hit_count", urlShortener.HitCount+1)
+			return result.Error
+		}
+		if err := utils.RetryWithExponentialBackoff(updateOp, maxRetries, initialDelay); err != nil {
+			fmt.Printf("Error updating record in DB: %v\n", err)
+			http.Error(w, "DB update error", http.StatusInternalServerError)
 			return
 		}
 
