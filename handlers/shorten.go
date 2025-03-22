@@ -114,6 +114,8 @@ func RedirectHandler(w http.ResponseWriter, r *http.Request) {
 	password := queryParams.Get("password")
 
 	var urlShortener models.URLShortener
+	// Set up a circuit breaker that opens after 3 failures and resets after 10 seconds.
+	cb := utils.NewCircuitBreaker(3, 10*time.Second)
 
 	// 1. Check Cache First
 	if data, err := URLCache.Get(shortCode); err == nil {
@@ -138,12 +140,12 @@ func RedirectHandler(w http.ResponseWriter, r *http.Request) {
 		json.NewEncoder(w).Encode(response)
 	} else {
 		// Use GORM to query the original URL based on the short code
-		result := config.DB.Model(&models.URLShortener{}).Where("short_code = ?  AND deleted_at IS NULL", shortCode).First(&urlShortener)
-		if result.Error != nil {
-			fmt.Println("errors ::")
-			fmt.Print(result.Error.Error())
-		}
-
+		// result := config.DB.Model(&models.URLShortener{}).Where("short_code = ?  AND deleted_at IS NULL", shortCode).First(&urlShortener)
+		// if result.Error != nil {
+		// 	fmt.Println("errors ::")
+		// 	fmt.Print(result.Error.Error())
+		// }
+		var result *gorm.DB
 		fetchOp := func() error {
 			result := config.DB.
 				Model(&models.URLShortener{}).
@@ -154,7 +156,7 @@ func RedirectHandler(w http.ResponseWriter, r *http.Request) {
 
 		maxRetries := 3
 		initialDelay := 100 * time.Millisecond
-		if err := utils.RetryWithExponentialBackoff(fetchOp, maxRetries, initialDelay); err != nil {
+		if err := utils.RetryWithCircuitBreaker(cb, fetchOp, maxRetries, initialDelay); err != nil {
 			fmt.Printf("Error fetching record from DB: %v\n", err)
 			http.Error(w, "DB error", http.StatusInternalServerError)
 			return
@@ -196,7 +198,7 @@ func RedirectHandler(w http.ResponseWriter, r *http.Request) {
 			result := config.DB.Model(&models.URLShortener{}).Where("short_code = ? AND deleted_at IS NULL", shortCode).Update("last_accessed_at", time.Now()).Update("hit_count", urlShortener.HitCount+1)
 			return result.Error
 		}
-		if err := utils.RetryWithExponentialBackoff(updateOp, maxRetries, initialDelay); err != nil {
+		if err := utils.RetryWithCircuitBreaker(cb, updateOp, maxRetries, initialDelay); err != nil {
 			fmt.Printf("Error updating record in DB: %v\n", err)
 			http.Error(w, "DB update error", http.StatusInternalServerError)
 			return
