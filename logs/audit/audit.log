@@ -302,3 +302,9 @@ AUDIT: 2025/03/19 07:49:08 Time: 2025-03-19T07:49:08+05:30 | Method: GET | URL: 
 AUDIT: 2025/03/19 07:49:08 LoggingMiddleware Time Taken: 7.2853ms
 AUDIT: 2025/03/19 07:49:46 Time: 2025-03-19T07:49:46+05:30 | Method: GET | URL: /redirect?code=7ch4BC | User-Agent: PostmanRuntime/7.43.0 | IP: ::1
 AUDIT: 2025/03/19 07:49:46 LoggingMiddleware Time Taken: 10.8473ms
+AUDIT: 2025/03/19 20:39:23 Time: 2025-03-19T20:39:23+05:30 | Method: GET | URL: /redirect?code=7ch4BC | User-Agent: PostmanRuntime/7.43.0 | IP: ::1
+AUDIT: 2025/03/19 20:39:23 LoggingMiddleware Time Taken: 22.6062ms
+AUDIT: 2025/03/19 20:39:32 Time: 2025-03-19T20:39:32+05:30 | Method: GET | URL: /redirect?code=7ch4BCt | User-Agent: PostmanRuntime/7.43.0 | IP: ::1
+AUDIT: 2025/03/19 20:39:32 LoggingMiddleware Time Taken: 23.7119ms
+AUDIT: 2025/03/19 20:39:53 Time: 2025-03-19T20:39:53+05:30 | Method: GET | URL: /redirect?code=7ch4BCt | User-Agent: PostmanRuntime/7.43.0 | IP: ::1
+AUDIT: 2025/03/19 20:39:53 LoggingMiddleware Time Taken: 7.285ms

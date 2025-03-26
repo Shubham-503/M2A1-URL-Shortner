@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"log"
 	"net/http"
+	"os"
 	"time"
 
 	"M2A1-URL-Shortner/cache"
@@ -97,7 +98,11 @@ func main() {
 
 	// Start the server
 	fmt.Println("Server is running on http://localhost:8080")
-	log.Fatal(http.ListenAndServe(":8080", r))
+	port := os.Getenv("PORT") // Railway injects the PORT environment variable
+	if port == "" {
+		port = "8080"
+	}
+	log.Fatal(http.ListenAndServe(":"+port, r))
 }
 
 // func finalHandler(w http.ResponseWriter, r *http.Request) {
