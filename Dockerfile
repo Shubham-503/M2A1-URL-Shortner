@@ -7,7 +7,7 @@ RUN go mod download
 COPY . .
 RUN CGO_ENABLED=1 GOOS=linux GOARCH=amd64 go build -o out .
 
-FROM alpine:latest
+FROM debian:bookworm-slim
 RUN apk --no-cache add ca-certificates sqlite
 WORKDIR /app
 COPY --from=builder /app/out .
