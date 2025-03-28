@@ -50,8 +50,9 @@ func main() {
 
 	// Initialize Redis cache.
 	REDIS_URL := os.Getenv("REDIS_URL")
+	REDIS_PASSWORD := os.Getenv("REDIS_PASSWORD")
 
-	redisStore, err := cache.NewRedisStore(REDIS_URL, "", 0)
+	redisStore, err := cache.NewRedisStore(REDIS_URL, REDIS_PASSWORD, 0)
 	if err != nil {
 		log.Fatalf("Failed to initialize Redis cache: %v", err)
 	}

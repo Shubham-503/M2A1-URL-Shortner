@@ -25,10 +25,13 @@ type RedisStore struct {
 // NewRedisStore initializes a new RedisStore instance.
 func NewRedisStore(addr, password string, db int) (*RedisStore, error) {
 	// Create a Redis client.
+	REDIS_USERNAME := os.Getenv("REDIS_USER")
+
 	rdb := redis.NewClient(&redis.Options{
-		Addr:     addr,     // e.g., "localhost:6379"
-		Password: password, // leave empty if no password
-		DB:       db,       // use default DB 0 or specify another one
+		Addr:     addr,
+		Username: REDIS_USERNAME, // e.g., "localhost:6379"
+		Password: password,       // leave empty if no password
+		DB:       db,             // use default DB 0 or specify another one
 	})
 
 	ctx := context.Background()
