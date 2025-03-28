@@ -9,7 +9,10 @@ COPY . .
 RUN CGO_ENABLED=1 GOOS=linux GOARCH=amd64 go build -o out .
 
 FROM debian:bookworm-slim
-RUN apt-get --no-cache add ca-certificates sqlite
+RUN apt-get update && apt-get install -y --no-install-recommends \
+    ca-certificates \
+    sqlite3 && \
+    rm -rf /var/lib/apt/lists/*
 WORKDIR /app
 COPY --from=builder /app/out .
 CMD ["./out"]
