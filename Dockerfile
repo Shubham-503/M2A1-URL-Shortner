@@ -1,5 +1,5 @@
 # Use a Debian-based Golang image as the builder
-FROM golang:1.21-buster AS builder
+FROM golang:1.21-bullseye AS builder
 WORKDIR /app
 
 # Install gcc for CGO
