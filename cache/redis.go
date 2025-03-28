@@ -4,6 +4,7 @@ import (
 	"M2A1-URL-Shortner/models"
 	"context"
 	"encoding/json"
+	"os"
 
 	"github.com/redis/go-redis/v9"
 )
@@ -36,11 +37,17 @@ func NewRedisStore(addr, password string, db int) (*RedisStore, error) {
 		return nil, err
 	}
 
-	// Set eviction policy to LRU (allkeys-lru) explicitly.
-	if err := rdb.ConfigSet(ctx, "maxmemory-policy", "allkeys-lru").Err(); err != nil {
-		return nil, err
+	appEnv := os.Getenv("APP_ENV")
+	if appEnv == "" {
+		appEnv = "development" // default to development if not set
 	}
 
+	if appEnv == "development" || appEnv == "staging" {
+		// Set eviction policy to LRU (allkeys-lru) explicitly.
+		if err := rdb.ConfigSet(ctx, "maxmemory-policy", "allkeys-lru").Err(); err != nil {
+			return nil, err
+		}
+	}
 	return &RedisStore{
 		Client: rdb,
 		Ctx:    ctx,
