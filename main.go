@@ -49,7 +49,8 @@ func main() {
 	// handlers.URLCache = URLCache
 
 	// Initialize Redis cache.
-	redisStore, err := cache.NewRedisStore("localhost:6379", "", 0)
+	REDIS_URL := os.Getenv("REDIS_URL")
+	redisStore, err := cache.NewRedisStore(REDIS_URL, "", 0)
 	if err != nil {
 		log.Fatalf("Failed to initialize Redis cache: %v", err)
 	}
