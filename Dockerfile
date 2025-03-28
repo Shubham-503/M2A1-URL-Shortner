@@ -13,8 +13,8 @@ COPY . .
 RUN go build -o out .
 
 # Minimal runtime image
-FROM alpine:latest
-RUN apk --no-cache add ca-certificates sqlite
+FROM debian:bullseye-slim
+# RUN apk --no-cache add ca-certificates sqlite
 WORKDIR /app
 COPY --from=builder /app/out .
 CMD ["./out"]
