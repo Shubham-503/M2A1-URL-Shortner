@@ -13,7 +13,6 @@ import (
 	middleware "M2A1-URL-Shortner/middlewares"
 
 	sentryhttp "github.com/getsentry/sentry-go/http"
-	"github.com/go-redis/redis"
 
 	"github.com/getsentry/sentry-go"
 	"github.com/gorilla/mux"
@@ -50,12 +49,9 @@ func main() {
 	// handlers.URLCache = URLCache
 
 	// Initialize Redis cache.
-	// REDIS_URL := os.Getenv("REDIS_URL")
-	opt, err := redis.ParseURL(os.Getenv("REDIS_URL"))
-	if err != nil {
-		log.Fatalf("Failed to parse Redis URL: %v", err)
-	}
-	redisStore, err := cache.NewRedisStore(opt, "", 0)
+	REDIS_URL := os.Getenv("REDIS_URL")
+
+	redisStore, err := cache.NewRedisStore(REDIS_URL, "", 0)
 	if err != nil {
 		log.Fatalf("Failed to initialize Redis cache: %v", err)
 	}
