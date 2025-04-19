@@ -8,11 +8,13 @@ import (
 	"encoding/json"
 	"fmt"
 	"io"
+	"log"
 	"net/http"
 	"strconv"
 	"time"
 
 	"M2A1-URL-Shortner/config"
+	"M2A1-URL-Shortner/queue"
 	"M2A1-URL-Shortner/utils"
 
 	"gorm.io/gorm"
@@ -491,4 +493,35 @@ func GetUserUrlsHandler(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
 	json.NewEncoder(w).Encode(response)
 
+}
+
+func SyncHandler(w http.ResponseWriter, r *http.Request) {
+	start := time.Now()
+	utils.SimulateSlowOperation()
+
+	response := map[string]string{"message": "Done"}
+	w.Header().Set("Content-Type", "application/json")
+	json.NewEncoder(w).Encode(response)
+	middlewares.AuditLogger.Printf("SyncHandler time take: %s", time.Since(start))
+}
+
+func AsyncHandler(w http.ResponseWriter, r *http.Request) {
+	start := time.Now()
+	go utils.SimulateSlowOperation()
+	utils.CheckThumbnail()
+	response := map[string]string{"message": "Accepted"}
+	w.Header().Set("Content-Type", "application/json")
+	json.NewEncoder(w).Encode(response)
+	middlewares.AuditLogger.Printf("AsyncHandler time take: %s", time.Since(start))
+
+}
+
+func EnqueueHandler(w http.ResponseWriter, r *http.Request) {
+	start := time.Now()
+
+	queue.TaskQueue <- utils.CheckThumbnail
+
+	log.Printf("[%.3f] Enqueued CheckThumbnail task\n", time.Since(start).Seconds())
+	w.WriteHeader(http.StatusAccepted)
+	fmt.Fprintln(w, "Task enqueued: CheckThumbnail")
 }

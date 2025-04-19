@@ -314,3 +314,285 @@ AUDIT: 2025/03/26 21:56:12 Time: 2025-03-26T21:56:12+05:30 | Method: GET | URL: 
 AUDIT: 2025/03/26 21:56:12 LoggingMiddleware Time Taken: 5.4577ms
 AUDIT: 2025/03/26 21:56:35 Time: 2025-03-26T21:56:35+05:30 | Method: GET | URL: /health | User-Agent: PostmanRuntime/7.43.0 | IP: ::1
 AUDIT: 2025/03/26 21:56:35 LoggingMiddleware Time Taken: 4.9196ms
+AUDIT: 2025/04/17 12:47:45 Time: 2025-04-17T12:47:45+05:30 | Method: GET | URL: /sync | User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/134.0.0.0 Safari/537.36 | IP: ::1
+AUDIT: 2025/04/17 12:47:48 SimulateSlowOperation Time Taken: 3.0005399s
+AUDIT: 2025/04/17 12:47:48 SyncHandler time take: 3000708000
+AUDIT: 2025/04/17 12:47:48 LoggingMiddleware Time Taken: 3.0180407s
+AUDIT: 2025/04/17 12:48:06 Time: 2025-04-17T12:48:06+05:30 | Method: GET | URL: /async | User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/134.0.0.0 Safari/537.36 | IP: ::1
+AUDIT: 2025/04/17 12:48:07 SyncHandler time take: 519900
+AUDIT: 2025/04/17 12:48:07 LoggingMiddleware Time Taken: 11.3571ms
+AUDIT: 2025/04/17 12:48:10 SimulateSlowOperation Time Taken: 3.0002392s
+AUDIT: 2025/04/17 12:52:07 Time: 2025-04-17T12:52:07+05:30 | Method: GET | URL: /async | User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/134.0.0.0 Safari/537.36 | IP: ::1
+AUDIT: 2025/04/17 12:52:07 AsyncHandler time take: 213.7µs
+AUDIT: 2025/04/17 12:52:07 LoggingMiddleware Time Taken: 14.5391ms
+AUDIT: 2025/04/17 12:52:10 SimulateSlowOperation Time Taken: 3.0002887s
+AUDIT: 2025/04/17 12:52:11 Time: 2025-04-17T12:52:11+05:30 | Method: GET | URL: /sync | User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/134.0.0.0 Safari/537.36 | IP: ::1
+AUDIT: 2025/04/17 12:52:14 SimulateSlowOperation Time Taken: 3.0002533s
+AUDIT: 2025/04/17 12:52:14 SyncHandler time take: 3.0002533s
+AUDIT: 2025/04/17 12:52:14 LoggingMiddleware Time Taken: 3.0080649s
+AUDIT: 2025/04/17 12:55:41 Time: 2025-04-17T12:55:41+05:30 | Method: GET | URL: /sync | User-Agent: PostmanRuntime/7.43.2 | IP: ::1
+AUDIT: 2025/04/17 12:55:44 SimulateSlowOperation Time Taken: 3.0002654s
+AUDIT: 2025/04/17 12:55:44 SyncHandler time take: 3.0002654s
+AUDIT: 2025/04/17 12:55:44 LoggingMiddleware Time Taken: 3.0093797s
+AUDIT: 2025/04/17 12:56:42 Time: 2025-04-17T12:56:42+05:30 | Method: GET | URL: /async | User-Agent: PostmanRuntime/7.43.2 | IP: ::1
+AUDIT: 2025/04/17 12:56:42 AsyncHandler time take: 745.6µs
+AUDIT: 2025/04/17 12:56:42 LoggingMiddleware Time Taken: 11.1749ms
+AUDIT: 2025/04/17 12:56:45 SimulateSlowOperation Time Taken: 3.000218s
+AUDIT: 2025/04/17 12:57:14 Time: 2025-04-17T12:57:14+05:30 | Method: GET | URL: /sync | User-Agent: PostmanRuntime/7.43.2 | IP: ::1
+AUDIT: 2025/04/17 12:57:17 SimulateSlowOperation Time Taken: 3.0007468s
+AUDIT: 2025/04/17 12:57:17 SyncHandler time take: 3.0007468s
+AUDIT: 2025/04/17 12:57:17 LoggingMiddleware Time Taken: 3.0078027s
+AUDIT: 2025/04/17 12:57:17 Time: 2025-04-17T12:57:17+05:30 | Method: GET | URL: /async | User-Agent: PostmanRuntime/7.43.2 | IP: ::1
+AUDIT: 2025/04/17 12:57:17 AsyncHandler time take: 124.5µs
+AUDIT: 2025/04/17 12:57:17 LoggingMiddleware Time Taken: 8.1757ms
+AUDIT: 2025/04/17 12:57:17 Time: 2025-04-17T12:57:17+05:30 | Method: GET | URL: /sync | User-Agent: PostmanRuntime/7.43.2 | IP: ::1
+AUDIT: 2025/04/17 12:57:20 SimulateSlowOperation Time Taken: 3.0002145s
+AUDIT: 2025/04/17 12:57:20 SimulateSlowOperation Time Taken: 3.0004056s
+AUDIT: 2025/04/17 12:57:20 SyncHandler time take: 3.0004056s
+AUDIT: 2025/04/17 12:57:20 LoggingMiddleware Time Taken: 3.006051s
+AUDIT: 2025/04/17 12:57:20 Time: 2025-04-17T12:57:20+05:30 | Method: GET | URL: /async | User-Agent: PostmanRuntime/7.43.2 | IP: ::1
+AUDIT: 2025/04/17 12:57:20 LoggingMiddleware Time Taken: 6.3137ms
+AUDIT: 2025/04/17 12:57:20 Time: 2025-04-17T12:57:20+05:30 | Method: GET | URL: /sync | User-Agent: PostmanRuntime/7.43.2 | IP: ::1
+AUDIT: 2025/04/17 12:57:20 LoggingMiddleware Time Taken: 4.5579ms
+AUDIT: 2025/04/17 12:57:20 Time: 2025-04-17T12:57:20+05:30 | Method: GET | URL: /async | User-Agent: PostmanRuntime/7.43.2 | IP: ::1
+AUDIT: 2025/04/17 12:57:21 LoggingMiddleware Time Taken: 4.0536ms
+AUDIT: 2025/04/17 12:57:21 Time: 2025-04-17T12:57:21+05:30 | Method: GET | URL: /sync | User-Agent: PostmanRuntime/7.43.2 | IP: ::1
+AUDIT: 2025/04/17 12:57:21 LoggingMiddleware Time Taken: 5.0599ms
+AUDIT: 2025/04/17 12:57:21 Time: 2025-04-17T12:57:21+05:30 | Method: GET | URL: /async | User-Agent: PostmanRuntime/7.43.2 | IP: ::1
+AUDIT: 2025/04/17 12:57:21 LoggingMiddleware Time Taken: 5.6525ms
+AUDIT: 2025/04/17 12:57:21 Time: 2025-04-17T12:57:21+05:30 | Method: GET | URL: /sync | User-Agent: PostmanRuntime/7.43.2 | IP: ::1
+AUDIT: 2025/04/17 12:57:21 LoggingMiddleware Time Taken: 4.366ms
+AUDIT: 2025/04/17 12:57:21 Time: 2025-04-17T12:57:21+05:30 | Method: GET | URL: /async | User-Agent: PostmanRuntime/7.43.2 | IP: ::1
+AUDIT: 2025/04/17 12:57:21 LoggingMiddleware Time Taken: 6.5876ms
+AUDIT: 2025/04/17 12:57:21 Time: 2025-04-17T12:57:21+05:30 | Method: GET | URL: /sync | User-Agent: PostmanRuntime/7.43.2 | IP: ::1
+AUDIT: 2025/04/17 12:57:21 LoggingMiddleware Time Taken: 5.6425ms
+AUDIT: 2025/04/17 12:57:21 Time: 2025-04-17T12:57:21+05:30 | Method: GET | URL: /async | User-Agent: PostmanRuntime/7.43.2 | IP: ::1
+AUDIT: 2025/04/17 12:57:21 LoggingMiddleware Time Taken: 3.7177ms
+AUDIT: 2025/04/17 12:57:45 Time: 2025-04-17T12:57:45+05:30 | Method: GET | URL: /sync | User-Agent: PostmanRuntime/7.43.2 | IP: ::1
+AUDIT: 2025/04/17 12:57:48 SimulateSlowOperation Time Taken: 3.0005627s
+AUDIT: 2025/04/17 12:57:48 SyncHandler time take: 3.0005627s
+AUDIT: 2025/04/17 12:57:48 LoggingMiddleware Time Taken: 3.0061815s
+AUDIT: 2025/04/17 12:57:48 Time: 2025-04-17T12:57:48+05:30 | Method: GET | URL: /sync | User-Agent: PostmanRuntime/7.43.2 | IP: ::1
+AUDIT: 2025/04/17 12:57:51 SimulateSlowOperation Time Taken: 3.0007751s
+AUDIT: 2025/04/17 12:57:51 SyncHandler time take: 3.0007751s
+AUDIT: 2025/04/17 12:57:51 LoggingMiddleware Time Taken: 3.007755s
+AUDIT: 2025/04/17 12:57:52 Time: 2025-04-17T12:57:52+05:30 | Method: GET | URL: /sync | User-Agent: PostmanRuntime/7.43.2 | IP: ::1
+AUDIT: 2025/04/17 12:57:55 SimulateSlowOperation Time Taken: 3.00045s
+AUDIT: 2025/04/17 12:57:55 SyncHandler time take: 3.001593s
+AUDIT: 2025/04/17 12:57:55 LoggingMiddleware Time Taken: 3.0108754s
+AUDIT: 2025/04/17 12:57:55 Time: 2025-04-17T12:57:55+05:30 | Method: GET | URL: /sync | User-Agent: PostmanRuntime/7.43.2 | IP: ::1
+AUDIT: 2025/04/17 12:57:58 SimulateSlowOperation Time Taken: 3.0006188s
+AUDIT: 2025/04/17 12:57:58 SyncHandler time take: 3.0006188s
+AUDIT: 2025/04/17 12:57:58 LoggingMiddleware Time Taken: 3.0061329s
+AUDIT: 2025/04/17 12:57:58 Time: 2025-04-17T12:57:58+05:30 | Method: GET | URL: /sync | User-Agent: PostmanRuntime/7.43.2 | IP: ::1
+AUDIT: 2025/04/17 12:57:58 LoggingMiddleware Time Taken: 6.0681ms
+AUDIT: 2025/04/17 12:57:58 Time: 2025-04-17T12:57:58+05:30 | Method: GET | URL: /sync | User-Agent: PostmanRuntime/7.43.2 | IP: ::1
+AUDIT: 2025/04/17 12:57:58 LoggingMiddleware Time Taken: 6.1175ms
+AUDIT: 2025/04/17 12:57:58 Time: 2025-04-17T12:57:58+05:30 | Method: GET | URL: /sync | User-Agent: PostmanRuntime/7.43.2 | IP: ::1
+AUDIT: 2025/04/17 12:57:58 LoggingMiddleware Time Taken: 5.5263ms
+AUDIT: 2025/04/17 12:57:58 Time: 2025-04-17T12:57:58+05:30 | Method: GET | URL: /sync | User-Agent: PostmanRuntime/7.43.2 | IP: ::1
+AUDIT: 2025/04/17 12:57:58 LoggingMiddleware Time Taken: 4.0421ms
+AUDIT: 2025/04/17 12:57:58 Time: 2025-04-17T12:57:58+05:30 | Method: GET | URL: /sync | User-Agent: PostmanRuntime/7.43.2 | IP: ::1
+AUDIT: 2025/04/17 12:57:58 LoggingMiddleware Time Taken: 5.0309ms
+AUDIT: 2025/04/17 12:57:58 Time: 2025-04-17T12:57:58+05:30 | Method: GET | URL: /sync | User-Agent: PostmanRuntime/7.43.2 | IP: ::1
+AUDIT: 2025/04/17 12:57:58 LoggingMiddleware Time Taken: 4.1126ms
+AUDIT: 2025/04/17 13:01:43 Time: 2025-04-17T13:01:43+05:30 | Method: GET | URL: /sync | User-Agent: PostmanRuntime/7.43.2 | IP: ::1
+AUDIT: 2025/04/17 13:01:46 SimulateSlowOperation Time Taken: 3.0002496s
+AUDIT: 2025/04/17 13:01:46 SyncHandler time take: 3.0002496s
+AUDIT: 2025/04/17 13:01:46 LoggingMiddleware Time Taken: 3.013869s
+AUDIT: 2025/04/17 13:01:51 Time: 2025-04-17T13:01:51+05:30 | Method: GET | URL: /async | User-Agent: PostmanRuntime/7.43.2 | IP: ::1
+AUDIT: 2025/04/17 13:01:51 AsyncHandler time take: 313.9µs
+AUDIT: 2025/04/17 13:01:51 LoggingMiddleware Time Taken: 8.8217ms
+AUDIT: 2025/04/17 13:01:52 Time: 2025-04-17T13:01:52+05:30 | Method: GET | URL: /async | User-Agent: PostmanRuntime/7.43.2 | IP: ::1
+AUDIT: 2025/04/17 13:01:52 AsyncHandler time take: 691.5µs
+AUDIT: 2025/04/17 13:01:52 LoggingMiddleware Time Taken: 7.2773ms
+AUDIT: 2025/04/17 13:01:54 Time: 2025-04-17T13:01:54+05:30 | Method: GET | URL: /async | User-Agent: PostmanRuntime/7.43.2 | IP: ::1
+AUDIT: 2025/04/17 13:01:54 AsyncHandler time take: 0s
+AUDIT: 2025/04/17 13:01:54 LoggingMiddleware Time Taken: 8.5013ms
+AUDIT: 2025/04/17 13:01:54 SimulateSlowOperation Time Taken: 3.0003859s
+AUDIT: 2025/04/17 13:01:55 Time: 2025-04-17T13:01:55+05:30 | Method: GET | URL: /async | User-Agent: PostmanRuntime/7.43.2 | IP: ::1
+AUDIT: 2025/04/17 13:01:55 LoggingMiddleware Time Taken: 7.4186ms
+AUDIT: 2025/04/17 13:01:55 SimulateSlowOperation Time Taken: 3.0002845s
+AUDIT: 2025/04/17 13:01:57 SimulateSlowOperation Time Taken: 3.0001646s
+AUDIT: 2025/04/17 13:03:36 Time: 2025-04-17T13:03:36+05:30 | Method: GET | URL: /async | User-Agent: PostmanRuntime/7.43.2 | IP: ::1
+AUDIT: 2025/04/17 13:03:36 AsyncHandler time take: 0s
+AUDIT: 2025/04/17 13:03:36 LoggingMiddleware Time Taken: 2.1403ms
+AUDIT: 2025/04/17 13:03:37 Time: 2025-04-17T13:03:37+05:30 | Method: GET | URL: /async | User-Agent: PostmanRuntime/7.43.2 | IP: ::1
+AUDIT: 2025/04/17 13:03:37 AsyncHandler time take: 0s
+AUDIT: 2025/04/17 13:03:37 LoggingMiddleware Time Taken: 517.1µs
+AUDIT: 2025/04/17 13:03:39 SimulateSlowOperation Time Taken: 3.0003585s
+AUDIT: 2025/04/17 13:03:39 Time: 2025-04-17T13:03:39+05:30 | Method: GET | URL: /async | User-Agent: PostmanRuntime/7.43.2 | IP: ::1
+AUDIT: 2025/04/17 13:03:39 AsyncHandler time take: 0s
+AUDIT: 2025/04/17 13:03:39 LoggingMiddleware Time Taken: 0s
+AUDIT: 2025/04/17 13:03:40 Time: 2025-04-17T13:03:40+05:30 | Method: GET | URL: /async | User-Agent: PostmanRuntime/7.43.2 | IP: ::1
+AUDIT: 2025/04/17 13:03:40 AsyncHandler time take: 0s
+AUDIT: 2025/04/17 13:03:40 LoggingMiddleware Time Taken: 1.0113ms
+AUDIT: 2025/04/17 13:03:40 SimulateSlowOperation Time Taken: 3.0002655s
+AUDIT: 2025/04/17 13:03:41 Time: 2025-04-17T13:03:41+05:30 | Method: GET | URL: /async | User-Agent: PostmanRuntime/7.43.2 | IP: ::1
+AUDIT: 2025/04/17 13:03:41 AsyncHandler time take: 0s
+AUDIT: 2025/04/17 13:03:41 LoggingMiddleware Time Taken: 619.3µs
+AUDIT: 2025/04/17 13:03:42 SimulateSlowOperation Time Taken: 3.0007042s
+AUDIT: 2025/04/17 13:03:43 Time: 2025-04-17T13:03:43+05:30 | Method: GET | URL: /async | User-Agent: PostmanRuntime/7.43.2 | IP: ::1
+AUDIT: 2025/04/17 13:03:43 AsyncHandler time take: 0s
+AUDIT: 2025/04/17 13:03:43 LoggingMiddleware Time Taken: 638.9µs
+AUDIT: 2025/04/17 13:03:43 SimulateSlowOperation Time Taken: 3.0002212s
+AUDIT: 2025/04/17 13:03:44 Time: 2025-04-17T13:03:44+05:30 | Method: GET | URL: /async | User-Agent: PostmanRuntime/7.43.2 | IP: ::1
+AUDIT: 2025/04/17 13:03:44 AsyncHandler time take: 0s
+AUDIT: 2025/04/17 13:03:44 LoggingMiddleware Time Taken: 311.1µs
+AUDIT: 2025/04/17 13:03:44 SimulateSlowOperation Time Taken: 3.0002733s
+AUDIT: 2025/04/17 13:03:45 Time: 2025-04-17T13:03:45+05:30 | Method: GET | URL: /async | User-Agent: PostmanRuntime/7.43.2 | IP: ::1
+AUDIT: 2025/04/17 13:03:45 AsyncHandler time take: 0s
+AUDIT: 2025/04/17 13:03:45 LoggingMiddleware Time Taken: 771µs
+AUDIT: 2025/04/17 13:03:46 SimulateSlowOperation Time Taken: 3.0008157s
+AUDIT: 2025/04/17 13:03:46 Time: 2025-04-17T13:03:46+05:30 | Method: GET | URL: /async | User-Agent: PostmanRuntime/7.43.2 | IP: ::1
+AUDIT: 2025/04/17 13:03:46 AsyncHandler time take: 0s
+AUDIT: 2025/04/17 13:03:46 LoggingMiddleware Time Taken: 0s
+AUDIT: 2025/04/17 13:03:47 SimulateSlowOperation Time Taken: 3.000162s
+AUDIT: 2025/04/17 13:03:48 Time: 2025-04-17T13:03:48+05:30 | Method: GET | URL: /async | User-Agent: PostmanRuntime/7.43.2 | IP: ::1
+AUDIT: 2025/04/17 13:03:48 AsyncHandler time take: 0s
+AUDIT: 2025/04/17 13:03:48 LoggingMiddleware Time Taken: 0s
+AUDIT: 2025/04/17 13:03:48 SimulateSlowOperation Time Taken: 3.0003611s
+AUDIT: 2025/04/17 13:03:49 Time: 2025-04-17T13:03:49+05:30 | Method: GET | URL: /async | User-Agent: PostmanRuntime/7.43.2 | IP: ::1
+AUDIT: 2025/04/17 13:03:49 AsyncHandler time take: 0s
+AUDIT: 2025/04/17 13:03:49 LoggingMiddleware Time Taken: 0s
+AUDIT: 2025/04/17 13:03:49 SimulateSlowOperation Time Taken: 3.0001193s
+AUDIT: 2025/04/17 13:03:51 SimulateSlowOperation Time Taken: 3.0002104s
+AUDIT: 2025/04/17 13:03:52 SimulateSlowOperation Time Taken: 3.0007125s
+AUDIT: 2025/04/17 13:03:56 Time: 2025-04-17T13:03:56+05:30 | Method: GET | URL: /sync | User-Agent: PostmanRuntime/7.43.2 | IP: ::1
+AUDIT: 2025/04/17 13:03:59 SimulateSlowOperation Time Taken: 3.0003754s
+AUDIT: 2025/04/17 13:03:59 SyncHandler time take: 3.0012671s
+AUDIT: 2025/04/17 13:03:59 LoggingMiddleware Time Taken: 3.0022122s
+AUDIT: 2025/04/17 13:03:59 Time: 2025-04-17T13:03:59+05:30 | Method: GET | URL: /sync | User-Agent: PostmanRuntime/7.43.2 | IP: ::1
+AUDIT: 2025/04/17 13:04:02 SimulateSlowOperation Time Taken: 3.0010102s
+AUDIT: 2025/04/17 13:04:02 SyncHandler time take: 3.0010102s
+AUDIT: 2025/04/17 13:04:02 LoggingMiddleware Time Taken: 3.0012422s
+AUDIT: 2025/04/17 13:04:02 Time: 2025-04-17T13:04:02+05:30 | Method: GET | URL: /sync | User-Agent: PostmanRuntime/7.43.2 | IP: ::1
+AUDIT: 2025/04/17 13:04:05 SimulateSlowOperation Time Taken: 3.0004725s
+AUDIT: 2025/04/17 13:04:05 SyncHandler time take: 3.0004725s
+AUDIT: 2025/04/17 13:04:05 LoggingMiddleware Time Taken: 3.0004725s
+AUDIT: 2025/04/17 13:04:05 Time: 2025-04-17T13:04:05+05:30 | Method: GET | URL: /sync | User-Agent: PostmanRuntime/7.43.2 | IP: ::1
+AUDIT: 2025/04/17 13:04:08 SimulateSlowOperation Time Taken: 3.0003569s
+AUDIT: 2025/04/17 13:04:08 SyncHandler time take: 3.0008675s
+AUDIT: 2025/04/17 13:04:08 LoggingMiddleware Time Taken: 3.0019431s
+AUDIT: 2025/04/17 13:04:09 Time: 2025-04-17T13:04:09+05:30 | Method: GET | URL: /sync | User-Agent: PostmanRuntime/7.43.2 | IP: ::1
+AUDIT: 2025/04/17 13:04:12 SimulateSlowOperation Time Taken: 3.0004854s
+AUDIT: 2025/04/17 13:04:12 SyncHandler time take: 3.0004854s
+AUDIT: 2025/04/17 13:04:12 LoggingMiddleware Time Taken: 3.0015603s
+AUDIT: 2025/04/17 13:04:12 Time: 2025-04-17T13:04:12+05:30 | Method: GET | URL: /sync | User-Agent: PostmanRuntime/7.43.2 | IP: ::1
+AUDIT: 2025/04/17 13:04:15 SimulateSlowOperation Time Taken: 3.000399s
+AUDIT: 2025/04/17 13:04:15 SyncHandler time take: 3.0008062s
+AUDIT: 2025/04/17 13:04:15 LoggingMiddleware Time Taken: 3.0020321s
+AUDIT: 2025/04/17 13:04:15 Time: 2025-04-17T13:04:15+05:30 | Method: GET | URL: /sync | User-Agent: PostmanRuntime/7.43.2 | IP: ::1
+AUDIT: 2025/04/17 13:04:18 SimulateSlowOperation Time Taken: 3.0002891s
+AUDIT: 2025/04/17 13:04:18 SyncHandler time take: 3.0002891s
+AUDIT: 2025/04/17 13:04:18 LoggingMiddleware Time Taken: 3.0011746s
+AUDIT: 2025/04/17 13:04:18 Time: 2025-04-17T13:04:18+05:30 | Method: GET | URL: /sync | User-Agent: PostmanRuntime/7.43.2 | IP: ::1
+AUDIT: 2025/04/17 13:04:21 SimulateSlowOperation Time Taken: 3.0012544s
+AUDIT: 2025/04/17 13:04:21 SyncHandler time take: 3.0012544s
+AUDIT: 2025/04/17 13:04:21 LoggingMiddleware Time Taken: 3.0016639s
+AUDIT: 2025/04/17 13:04:21 Time: 2025-04-17T13:04:21+05:30 | Method: GET | URL: /sync | User-Agent: PostmanRuntime/7.43.2 | IP: ::1
+AUDIT: 2025/04/17 13:04:24 SimulateSlowOperation Time Taken: 3.0003494s
+AUDIT: 2025/04/17 13:04:24 SyncHandler time take: 3.0003494s
+AUDIT: 2025/04/17 13:04:24 LoggingMiddleware Time Taken: 3.0010171s
+AUDIT: 2025/04/17 13:04:24 Time: 2025-04-17T13:04:24+05:30 | Method: GET | URL: /sync | User-Agent: PostmanRuntime/7.43.2 | IP: ::1
+AUDIT: 2025/04/17 13:04:27 SimulateSlowOperation Time Taken: 3.0002222s
+AUDIT: 2025/04/17 13:04:27 SyncHandler time take: 3.0005456s
+AUDIT: 2025/04/17 13:04:27 LoggingMiddleware Time Taken: 3.0016137s
+AUDIT: 2025/04/17 13:05:22 Time: 2025-04-17T13:05:22+05:30 | Method: GET | URL: /async | User-Agent: PostmanRuntime/7.43.2 | IP: ::1
+AUDIT: 2025/04/17 13:05:22 AsyncHandler time take: 0s
+AUDIT: 2025/04/17 13:05:22 LoggingMiddleware Time Taken: 638.5µs
+AUDIT: 2025/04/17 13:05:22 Time: 2025-04-17T13:05:22+05:30 | Method: GET | URL: /async | User-Agent: PostmanRuntime/7.43.2 | IP: ::1
+AUDIT: 2025/04/17 13:05:22 AsyncHandler time take: 0s
+AUDIT: 2025/04/17 13:05:22 LoggingMiddleware Time Taken: 569.7µs
+AUDIT: 2025/04/17 13:05:22 Time: 2025-04-17T13:05:22+05:30 | Method: GET | URL: /async | User-Agent: PostmanRuntime/7.43.2 | IP: ::1
+AUDIT: 2025/04/17 13:05:22 AsyncHandler time take: 0s
+AUDIT: 2025/04/17 13:05:22 LoggingMiddleware Time Taken: 694.1µs
+AUDIT: 2025/04/17 13:05:22 Time: 2025-04-17T13:05:22+05:30 | Method: GET | URL: /async | User-Agent: PostmanRuntime/7.43.2 | IP: ::1
+AUDIT: 2025/04/17 13:05:22 AsyncHandler time take: 0s
+AUDIT: 2025/04/17 13:05:22 LoggingMiddleware Time Taken: 890.9µs
+AUDIT: 2025/04/17 13:05:22 Time: 2025-04-17T13:05:22+05:30 | Method: GET | URL: /async | User-Agent: PostmanRuntime/7.43.2 | IP: ::1
+AUDIT: 2025/04/17 13:05:22 AsyncHandler time take: 0s
+AUDIT: 2025/04/17 13:05:22 LoggingMiddleware Time Taken: 791.7µs
+AUDIT: 2025/04/17 13:05:22 Time: 2025-04-17T13:05:22+05:30 | Method: GET | URL: /async | User-Agent: PostmanRuntime/7.43.2 | IP: ::1
+AUDIT: 2025/04/17 13:05:22 AsyncHandler time take: 0s
+AUDIT: 2025/04/17 13:05:22 LoggingMiddleware Time Taken: 314.6µs
+AUDIT: 2025/04/17 13:05:22 Time: 2025-04-17T13:05:22+05:30 | Method: GET | URL: /async | User-Agent: PostmanRuntime/7.43.2 | IP: ::1
+AUDIT: 2025/04/17 13:05:22 AsyncHandler time take: 0s
+AUDIT: 2025/04/17 13:05:22 LoggingMiddleware Time Taken: 631µs
+AUDIT: 2025/04/17 13:05:22 Time: 2025-04-17T13:05:22+05:30 | Method: GET | URL: /async | User-Agent: PostmanRuntime/7.43.2 | IP: ::1
+AUDIT: 2025/04/17 13:05:22 AsyncHandler time take: 0s
+AUDIT: 2025/04/17 13:05:22 LoggingMiddleware Time Taken: 0s
+AUDIT: 2025/04/17 13:05:22 Time: 2025-04-17T13:05:22+05:30 | Method: GET | URL: /async | User-Agent: PostmanRuntime/7.43.2 | IP: ::1
+AUDIT: 2025/04/17 13:05:22 AsyncHandler time take: 0s
+AUDIT: 2025/04/17 13:05:22 LoggingMiddleware Time Taken: 489.6µs
+AUDIT: 2025/04/17 13:05:22 Time: 2025-04-17T13:05:22+05:30 | Method: GET | URL: /async | User-Agent: PostmanRuntime/7.43.2 | IP: ::1
+AUDIT: 2025/04/17 13:05:22 AsyncHandler time take: 0s
+AUDIT: 2025/04/17 13:05:22 LoggingMiddleware Time Taken: 0s
+AUDIT: 2025/04/17 13:05:25 SimulateSlowOperation Time Taken: 3.0004406s
+AUDIT: 2025/04/17 13:05:25 SimulateSlowOperation Time Taken: 3.0002805s
+AUDIT: 2025/04/17 13:05:25 SimulateSlowOperation Time Taken: 3.0008971s
+AUDIT: 2025/04/17 13:05:25 SimulateSlowOperation Time Taken: 3.0001712s
+AUDIT: 2025/04/17 13:05:25 SimulateSlowOperation Time Taken: 3.0004935s
+AUDIT: 2025/04/17 13:05:25 SimulateSlowOperation Time Taken: 3.0000791s
+AUDIT: 2025/04/17 13:05:25 SimulateSlowOperation Time Taken: 3.0004694s
+AUDIT: 2025/04/17 13:05:25 SimulateSlowOperation Time Taken: 3.0006344s
+AUDIT: 2025/04/17 13:05:25 SimulateSlowOperation Time Taken: 3.0001794s
+AUDIT: 2025/04/17 13:05:25 SimulateSlowOperation Time Taken: 3.0007796s
+AUDIT: 2025/04/17 14:25:29 Time: 2025-04-17T14:25:29+05:30 | Method: GET | URL: /async | User-Agent: PostmanRuntime/7.43.2 | IP: ::1
+AUDIT: 2025/04/17 14:25:29 AsyncHandler time take: 18.0728ms
+AUDIT: 2025/04/17 14:25:29 LoggingMiddleware Time Taken: 22.2452ms
+AUDIT: 2025/04/17 14:25:32 SimulateSlowOperation Time Taken: 3.0003359s
+AUDIT: 2025/04/17 14:31:14 Time: 2025-04-17T14:31:14+05:30 | Method: GET | URL: /async | User-Agent: PostmanRuntime/7.43.2 | IP: ::1
+AUDIT: 2025/04/17 14:31:14 AsyncHandler time take: 18.0041ms
+AUDIT: 2025/04/17 14:31:14 LoggingMiddleware Time Taken: 19.7268ms
+AUDIT: 2025/04/17 14:31:17 SimulateSlowOperation Time Taken: 3.0005748s
+AUDIT: 2025/04/17 14:47:13 Time: 2025-04-17T14:47:13+05:30 | Method: GET | URL: /async | User-Agent: PostmanRuntime/7.43.2 | IP: ::1
+AUDIT: 2025/04/17 14:47:13 AsyncHandler time take: 3.936ms
+AUDIT: 2025/04/17 14:47:13 LoggingMiddleware Time Taken: 7.6377ms
+AUDIT: 2025/04/17 14:47:16 SimulateSlowOperation Time Taken: 3.0001541s
+AUDIT: 2025/04/17 14:48:54 Time: 2025-04-17T14:48:54+05:30 | Method: GET | URL: /async | User-Agent: PostmanRuntime/7.43.2 | IP: ::1
+AUDIT: 2025/04/17 14:48:54 AsyncHandler time take: 66.0165ms
+AUDIT: 2025/04/17 14:48:54 LoggingMiddleware Time Taken: 67.3193ms
+AUDIT: 2025/04/17 14:48:57 SimulateSlowOperation Time Taken: 3.000263s
+AUDIT: 2025/04/17 14:51:50 Time: 2025-04-17T14:51:50+05:30 | Method: GET | URL: /async | User-Agent: PostmanRuntime/7.43.2 | IP: ::1
+AUDIT: 2025/04/17 14:51:50 AsyncHandler time take: 449.4329ms
+AUDIT: 2025/04/17 14:51:50 LoggingMiddleware Time Taken: 451.8285ms
+AUDIT: 2025/04/17 14:51:53 SimulateSlowOperation Time Taken: 3.000314s
+AUDIT: 2025/04/17 14:53:03 Time: 2025-04-17T14:53:03+05:30 | Method: GET | URL: /async | User-Agent: PostmanRuntime/7.43.2 | IP: ::1
+AUDIT: 2025/04/17 14:53:03 AsyncHandler time take: 673.8µs
+AUDIT: 2025/04/17 14:53:03 LoggingMiddleware Time Taken: 1.7984ms
+AUDIT: 2025/04/17 14:53:06 SimulateSlowOperation Time Taken: 3.0003206s
+AUDIT: 2025/04/17 17:44:58 Time: 2025-04-17T17:44:58+05:30 | Method: GET | URL: /async | User-Agent: PostmanRuntime/7.43.2 | IP: ::1
+AUDIT: 2025/04/17 17:44:59 AsyncHandler time take: 43.0614ms
+AUDIT: 2025/04/17 17:44:59 LoggingMiddleware Time Taken: 46.0793ms
+AUDIT: 2025/04/17 17:45:01 SimulateSlowOperation Time Taken: 3.0003541s
+AUDIT: 2025/04/17 18:11:15 Time: 2025-04-17T18:11:15+05:30 | Method: GET | URL: /async | User-Agent: PostmanRuntime/7.43.2 | IP: ::1
+AUDIT: 2025/04/17 18:11:15 AsyncHandler time take: 2.866ms
+AUDIT: 2025/04/17 18:11:15 LoggingMiddleware Time Taken: 4.6308ms
+AUDIT: 2025/04/17 18:11:18 SimulateSlowOperation Time Taken: 3.0003324s
+AUDIT: 2025/04/18 19:24:02 Time: 2025-04-18T19:24:02+05:30 | Method: GET | URL: /enqueue | User-Agent: PostmanRuntime/7.43.2 | IP: ::1
+AUDIT: 2025/04/18 19:24:02 LoggingMiddleware Time Taken: 6.3736ms
+AUDIT: 2025/04/18 19:24:03 Time: 2025-04-18T19:24:03+05:30 | Method: GET | URL: /enqueue | User-Agent: PostmanRuntime/7.43.2 | IP: ::1
+AUDIT: 2025/04/18 19:24:03 LoggingMiddleware Time Taken: 2.3399ms
+AUDIT: 2025/04/18 19:24:05 Time: 2025-04-18T19:24:05+05:30 | Method: GET | URL: /enqueue | User-Agent: PostmanRuntime/7.43.2 | IP: ::1
+AUDIT: 2025/04/18 19:24:05 LoggingMiddleware Time Taken: 759.5µs
+AUDIT: 2025/04/18 19:24:06 Time: 2025-04-18T19:24:06+05:30 | Method: GET | URL: /enqueue | User-Agent: PostmanRuntime/7.43.2 | IP: ::1
+AUDIT: 2025/04/18 19:24:06 LoggingMiddleware Time Taken: 1.2915ms
+AUDIT: 2025/04/18 19:24:07 Time: 2025-04-18T19:24:07+05:30 | Method: GET | URL: /enqueue | User-Agent: PostmanRuntime/7.43.2 | IP: ::1
+AUDIT: 2025/04/18 19:24:07 LoggingMiddleware Time Taken: 1.2207ms
+AUDIT: 2025/04/18 19:26:45 Time: 2025-04-18T19:26:45+05:30 | Method: GET | URL: /enqueue | User-Agent: PostmanRuntime/7.43.2 | IP: ::1
+AUDIT: 2025/04/18 19:26:45 LoggingMiddleware Time Taken: 5.0038ms
+AUDIT: 2025/04/18 19:26:46 Time: 2025-04-18T19:26:46+05:30 | Method: GET | URL: /enqueue | User-Agent: PostmanRuntime/7.43.2 | IP: ::1
+AUDIT: 2025/04/18 19:26:46 LoggingMiddleware Time Taken: 1.8429ms
+AUDIT: 2025/04/18 19:26:47 Time: 2025-04-18T19:26:47+05:30 | Method: GET | URL: /enqueue | User-Agent: PostmanRuntime/7.43.2 | IP: ::1
+AUDIT: 2025/04/18 19:26:47 LoggingMiddleware Time Taken: 1.8947ms
+AUDIT: 2025/04/18 19:26:49 Time: 2025-04-18T19:26:49+05:30 | Method: GET | URL: /enqueue | User-Agent: PostmanRuntime/7.43.2 | IP: ::1
+AUDIT: 2025/04/18 19:26:49 LoggingMiddleware Time Taken: 1.2474ms
+AUDIT: 2025/04/18 19:26:50 Time: 2025-04-18T19:26:50+05:30 | Method: GET | URL: /enqueue | User-Agent: PostmanRuntime/7.43.2 | IP: ::1
+AUDIT: 2025/04/18 19:26:50 LoggingMiddleware Time Taken: 1.1408ms
+AUDIT: 2025/04/18 19:26:51 Time: 2025-04-18T19:26:51+05:30 | Method: GET | URL: /enqueue | User-Agent: PostmanRuntime/7.43.2 | IP: ::1
+AUDIT: 2025/04/18 19:26:51 LoggingMiddleware Time Taken: 1.6143ms
+AUDIT: 2025/04/18 19:28:48 Time: 2025-04-18T19:28:48+05:30 | Method: GET | URL: /enqueue | User-Agent: PostmanRuntime/7.43.2 | IP: ::1
+AUDIT: 2025/04/18 19:28:48 LoggingMiddleware Time Taken: 1.1337ms
+AUDIT: 2025/04/18 19:28:49 Time: 2025-04-18T19:28:49+05:30 | Method: GET | URL: /enqueue | User-Agent: PostmanRuntime/7.43.2 | IP: ::1
+AUDIT: 2025/04/18 19:28:49 LoggingMiddleware Time Taken: 1.386ms

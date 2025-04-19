@@ -172,3 +172,9 @@ func RetryWithCircuitBreaker(cb *CircuitBreaker, operation func() error, maxRetr
 	middlewares.AuditLogger.Printf("operation failed after %d attempts: %v", maxRetries, err)
 	return fmt.Errorf("operation failed after %d attempts: %w", maxRetries, err)
 }
+
+func SimulateSlowOperation() {
+	start := time.Now()
+	time.Sleep(3 * time.Second)
+	middlewares.AuditLogger.Printf("SimulateSlowOperation Time Taken: %s", time.Since(start))
+}

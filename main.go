@@ -3,16 +3,21 @@ package main
 import (
 	"fmt"
 	"log"
+	"math/rand"
 	"net/http"
 	"os"
 	"time"
 
+	"M2A1-URL-Shortner/batcher"
 	"M2A1-URL-Shortner/cache"
 	"M2A1-URL-Shortner/config"
 	"M2A1-URL-Shortner/handlers"
 	middleware "M2A1-URL-Shortner/middlewares"
+	"M2A1-URL-Shortner/queue"
+	"M2A1-URL-Shortner/utils"
 
 	sentryhttp "github.com/getsentry/sentry-go/http"
+	"github.com/robfig/cron/v3"
 
 	"github.com/getsentry/sentry-go"
 	"github.com/gorilla/mux"
@@ -65,6 +70,33 @@ func main() {
 	// 	log.Fatalf("Failed to initialize Redis cache: %v", err)
 	// }
 	// middleware.
+
+	// cronjob setup
+	c := cron.New()
+
+	// Schedule job to run every minute
+	c.AddFunc("@every 1m", func() {
+		log.Println("Running CheckThumbnail job at", time.Now())
+		utils.CheckThumbnail()
+	})
+
+	c.Start()
+	queue.StartWorker()
+
+	// For demo, flush every 10s or every 5 events
+	cb := batcher.NewCountBatcher(5)
+	tb := batcher.NewTimeBatcher(10 * time.Second)
+	tb.Start()
+	defer tb.Stop()
+
+	ticker := time.NewTicker(1 * time.Second)
+	for i := 0; i < 12; i++ {
+		<-ticker.C
+		evt := batcher.ViewEvent{ProductID: rand.Intn(3) + 1, Timestamp: time.Now()}
+		fmt.Printf("Enqueue event #%d for product %d\n", i+1, evt.ProductID)
+		cb.Enqueue(evt)
+		tb.Enqueue(evt)
+	}
 	// Serve static files using mux
 	staticDir := "./static/"
 	// fs := http.FileServer(http.Dir(staticDir))
@@ -77,12 +109,12 @@ func main() {
 	r.Use(middleware.SentryAlertMiddleware)
 	r.Use(middleware.ResponseTimeMiddleware)
 	// r.Use(middleware.RateLimitMiddleware)
-	r.Use(middleware.FreeTierMiddleware)
+	// r.Use(middleware.FreeTierMiddleware)
 	// r.Use(middleware.LeakyBucketMiddleware(5, 0.005))
 	var handler http.Handler = http.HandlerFunc(handlers.ShortenHandler)
 	handler = middleware.AuthenticateAPIKey(handler)
 	handler = middleware.BlacklistMiddleware(handler)
-	handler = middleware.APIRateLimitMiddleware(2)(handler)
+	// handler = middleware.APIRateLimitMiddleware(2)(handler)
 	// r.HandleFunc("/redirect", handlers.RedirectHandler).Methods("GET")
 	// r.Handle("/shorten", middleware.LoggingMiddleware(http.HandlerFunc(handlers.ShortenHandler))).Methods("POST")
 	// r.Handle("/shorten", middleware.AuthenticateAPIKey(http.HandlerFunc(handlers.ShortenHandler))).Methods("POST")
@@ -94,6 +126,10 @@ func main() {
 	r.HandleFunc("/redirect", handlers.RedirectHandler).Methods("GET")
 	r.HandleFunc("/users/url", handlers.GetUserUrlsHandler).Methods("GET")
 	r.HandleFunc("/health", handlers.HealthHandler).Methods("GET")
+
+	r.HandleFunc("/sync", handlers.SyncHandler).Methods("GET")
+	r.HandleFunc("/async", handlers.AsyncHandler).Methods("GET")
+	r.HandleFunc("/enqueue", handlers.EnqueueHandler).Methods("GET")
 
 	// static path
 	r.PathPrefix("/").Handler(http.FileServer(http.Dir(staticDir)))

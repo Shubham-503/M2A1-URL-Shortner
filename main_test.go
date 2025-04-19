@@ -16,6 +16,7 @@ import (
 	middleware "M2A1-URL-Shortner/middlewares"
 	"M2A1-URL-Shortner/models"
 	"M2A1-URL-Shortner/utils"
+	"M2A1-URL-Shortner/queue"
 
 	"github.com/gorilla/mux"
 )
@@ -635,4 +636,24 @@ func TestGetUserUrls(t *testing.T) {
 		t.Fatalf("Expected status code 200, got %d", resp.Code)
 	}
 
+}
+
+func TestEnqueueHandler(t *testing.T) {
+	// Empty queue
+	for len(queue.TaskQueue) > 0 {
+		<-queue.TaskQueue
+	}
+
+	req := httptest.NewRequest("GET", "/enqueue", nil)
+	w := httptest.NewRecorder()
+
+	handlers.EnqueueHandler(w, req)
+
+	if w.Result().StatusCode != http.StatusAccepted {
+		t.Errorf("expected status %d, got %d", http.StatusAccepted, w.Result().StatusCode)
+	}
+
+	if len(queue.TaskQueue) != 1 {
+		t.Errorf("expected 1 task in queue, got %d", len(queue.TaskQueue))
+	}
 }
