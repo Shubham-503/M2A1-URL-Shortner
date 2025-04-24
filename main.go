@@ -3,17 +3,15 @@ package main
 import (
 	"fmt"
 	"log"
-	"math/rand"
 	"net/http"
 	"os"
 	"time"
 
-	"M2A1-URL-Shortner/batcher"
 	"M2A1-URL-Shortner/cache"
 	"M2A1-URL-Shortner/config"
 	"M2A1-URL-Shortner/handlers"
 	middleware "M2A1-URL-Shortner/middlewares"
-	"M2A1-URL-Shortner/queue"
+	"M2A1-URL-Shortner/pubsub"
 	"M2A1-URL-Shortner/utils"
 
 	sentryhttp "github.com/getsentry/sentry-go/http"
@@ -24,6 +22,7 @@ import (
 )
 
 var URLCache *cache.URLCache
+var PS *pubsub.PubSub
 
 func main() {
 	// To initialize Sentry's handler, you need to initialize Sentry itself beforehand
@@ -77,26 +76,84 @@ func main() {
 	// Schedule job to run every minute
 	c.AddFunc("@every 1m", func() {
 		log.Println("Running CheckThumbnail job at", time.Now())
-		utils.CheckThumbnail()
+		profileImgBytes, err := os.ReadFile("assets/image/profileImg.jpg")
+		if err != nil {
+			fmt.Printf("Error in profilepc read %v", err.Error())
+		}
+		data := map[string]interface{}{
+			"image": profileImgBytes,
+		}
+		utils.CheckThumbnail(data)
 	})
 
-	c.Start()
-	queue.StartWorker()
+	// c.Start()
+	// queue.StartEventWorker()
+	// queue.StartWorker("worker 2")
+	// queue.StartLogUploadWorker()
+	// queue.StartNotifyAdminWorker()
 
 	// For demo, flush every 10s or every 5 events
-	cb := batcher.NewCountBatcher(5)
-	tb := batcher.NewTimeBatcher(10 * time.Second)
-	tb.Start()
-	defer tb.Stop()
+	// cb := batcher.NewCountBatcher(5)
+	// tb := batcher.NewTimeBatcher(10 * time.Second)
+	// tb.Start()
+	// defer tb.Stop()
 
-	ticker := time.NewTicker(1 * time.Second)
-	for i := 0; i < 12; i++ {
-		<-ticker.C
-		evt := batcher.ViewEvent{ProductID: rand.Intn(3) + 1, Timestamp: time.Now()}
-		fmt.Printf("Enqueue event #%d for product %d\n", i+1, evt.ProductID)
-		cb.Enqueue(evt)
-		tb.Enqueue(evt)
+	// ticker := time.NewTicker(1 * time.Second)
+	// for i := 0; i < 12; i++ {
+	// 	<-ticker.C
+	// 	evt := batcher.ViewEvent{ProductID: rand.Intn(3) + 1, Timestamp: time.Now()}
+	// 	fmt.Printf("Enqueue event #%d for product %d\n", i+1, evt.ProductID)
+	// 	cb.Enqueue(evt)
+	// 	tb.Enqueue(evt)
+	// }
+
+	// ps := pubsub.NewPubSub()
+
+	// ps.Subscribe("image_uploaded", func(data interface{}) {
+	// 	fmt.Println("Resize:", data)
+	// })
+
+	// ps.Subscribe("image_uploaded", func(data interface{}) {
+	// 	fmt.Println("Notify Slack:", data)
+	// })
+
+	// ps.Publish("image_uploaded", map[string]string{
+	// 	"filename": "photo.jpg",
+	// })
+
+	// Create PubSub using RedisStore
+	PS := pubsub.NewPubSub(redisStore)
+	PS.Subscribe("image_uploaded", utils.CheckThumbnail)
+	PS.Subscribe("image_uploaded", utils.LogUpload)
+	PS.Subscribe("image_uploaded", utils.NotifyAdmin)
+	handlers.PS = PS
+	// pubsub.SubscribeToEvent(redisStore,"image_uploaded", utils.CheckThumbnail("s"))
+
+	// Register subscribers
+	// ps.Subscribe("image_uploaded", func(data map[string]interface{}) {
+	// 	fmt.Println("Thumbnail generation for:")
+	// 	utils.CheckThumbnail(data["filename"])
+	// })
+
+	// ps.Subscribe("image_uploaded", func(data map[string]interface{}) {
+	// 	fmt.Println("Notify admin:")
+	// })
+
+	// Start PubSub worker
+	// ps.StartWorker()
+
+	// Simulate publishing an event
+	profileImgBytes, err := os.ReadFile("assets/image/profileImg.jpg")
+	if err != nil {
+		fmt.Printf("Error in profilepc read %v", err.Error())
 	}
+	err = PS.Publish("image_uploaded", map[string]interface{}{
+		"filename": profileImgBytes,
+	})
+	if err != nil {
+		fmt.Println("Publish error:", err)
+	}
+
 	// Serve static files using mux
 	staticDir := "./static/"
 	// fs := http.FileServer(http.Dir(staticDir))

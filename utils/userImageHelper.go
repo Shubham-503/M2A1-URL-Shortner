@@ -6,12 +6,14 @@ import (
 	"bytes"
 	"fmt"
 	"os"
+	"time"
 
 	"github.com/disintegration/imaging"
 )
 
-func CheckThumbnail() {
-	fmt.Println("Check Thumbnail called")
+func CheckThumbnail(data map[string]interface{}) {
+	fmt.Printf("Check Thumbnail called with event")
+	time.Sleep(4 * time.Second)
 	var users []models.User
 	result := config.DB.Find(&users)
 	if result.Error != nil {
@@ -52,4 +54,12 @@ func CheckThumbnail() {
 
 	}
 
+}
+
+func LogUpload(map[string]interface{}) {
+	time.Sleep(1 * time.Second)
+}
+
+func NotifyAdmin(map[string]interface{}) {
+	time.Sleep(2 * time.Second)
 }

@@ -4,23 +4,26 @@ import (
 	"M2A1-URL-Shortner/cache"
 	"M2A1-URL-Shortner/middlewares"
 	"M2A1-URL-Shortner/models"
+	"M2A1-URL-Shortner/pubsub"
 	"bytes"
 	"encoding/json"
 	"fmt"
 	"io"
 	"log"
 	"net/http"
+	"os"
 	"strconv"
 	"time"
 
 	"M2A1-URL-Shortner/config"
-	"M2A1-URL-Shortner/queue"
+
 	"M2A1-URL-Shortner/utils"
 
 	"gorm.io/gorm"
 )
 
 var URLCache cache.RedisURLCache
+var PS *pubsub.PubSub
 
 // Handler to shorten URLs
 func ShortenHandler(w http.ResponseWriter, r *http.Request) {
@@ -508,7 +511,14 @@ func SyncHandler(w http.ResponseWriter, r *http.Request) {
 func AsyncHandler(w http.ResponseWriter, r *http.Request) {
 	start := time.Now()
 	go utils.SimulateSlowOperation()
-	utils.CheckThumbnail()
+	profileImgBytes, err := os.ReadFile("assets/image/profileImg.jpg")
+	if err != nil {
+		fmt.Printf("Error in profilepc read %v", err.Error())
+	}
+	data := map[string]interface{}{
+		"image": profileImgBytes,
+	}
+	utils.CheckThumbnail(data)
 	response := map[string]string{"message": "Accepted"}
 	w.Header().Set("Content-Type", "application/json")
 	json.NewEncoder(w).Encode(response)
@@ -519,7 +529,22 @@ func AsyncHandler(w http.ResponseWriter, r *http.Request) {
 func EnqueueHandler(w http.ResponseWriter, r *http.Request) {
 	start := time.Now()
 
-	queue.TaskQueue <- utils.CheckThumbnail
+	// queue.TaskQueue <- utils.CheckThumbnail("image_upload")
+
+	// queue.TaskQueue <- types.Task{
+	// 	Event: "image_uploaded",
+	// 	Data:  nil,
+	// }
+
+	// queue.EventQueue <- types.Task{
+	// 	Event: "image_uploaded",
+	// 	Data:  nil,
+	// }
+
+	PS.Publish("image_uploaded", map[string]interface{}{
+		"image":  "original_Image",
+		"userID": "123",
+	})
 
 	log.Printf("[%.3f] Enqueued CheckThumbnail task\n", time.Since(start).Seconds())
 	w.WriteHeader(http.StatusAccepted)
